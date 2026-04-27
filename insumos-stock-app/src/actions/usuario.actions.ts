@@ -29,7 +29,7 @@ export const postLogin = async (usuario: string, password: string) => {
     return {
       ok: true,
       message: "Usuario logueado correctamente",
-      rol: usuarioEncontrado.rol,
+      usuario: usuarioEncontrado,
     };
   } catch (error) {
     console.error(error);

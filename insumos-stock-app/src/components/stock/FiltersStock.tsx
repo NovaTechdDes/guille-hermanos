@@ -1,11 +1,16 @@
+import { Stock } from "@/src/actions/data.actions";
 import { useStockStore } from "@/src/store/useStockStore";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { TextInput, View, useColorScheme } from "react-native";
 import Button from "../ui/Button";
 
-export default function FiltersStock() {
-  const { openModal } = useStockStore();
+interface Props {
+  filteredStock: Stock[];
+}
+
+export default function FiltersStock({ filteredStock }: Props) {
+  const { openModal, setBuscador, buscador } = useStockStore();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -32,6 +37,8 @@ export default function FiltersStock() {
           className="mr-2"
         />
         <TextInput
+          value={buscador}
+          onChangeText={setBuscador}
           placeholder="Buscar por nombre..."
           placeholderTextColor={isDark ? "#6B7280" : "#9CA3AF"}
           className="flex-1 text-neutral-800 dark:text-neutral-100 font-semibold text-sm h-10"

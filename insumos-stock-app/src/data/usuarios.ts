@@ -2,7 +2,7 @@ import { Usuario } from "../interface/Usuario";
 
 const usuarios: Usuario[] = [
   {
-    usuario: "prueba",
+    usuario: "b",
     password: "1",
     rol: "admin",
   },

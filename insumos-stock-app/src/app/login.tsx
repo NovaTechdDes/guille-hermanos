@@ -9,12 +9,14 @@ import Checkbox from "../components/ui/Checkbox";
 import Text from "../components/ui/Text";
 import { useTheme } from "../hooks";
 import { useMutateUsuario } from "../hooks/usuarios/useMutateUsuario";
+import { useUsuarioStore } from "../store/useUsuarioStore";
 import { mensaje } from "../utils/mensaje";
 
 export default function LoginScreen() {
   const { isDark } = useTheme();
 
   const { startPostLogin } = useMutateUsuario();
+  const { setUsuario: setUsuarioStore } = useUsuarioStore();
 
   const [recordarme, setRecordarme] = useState<boolean>(false);
   const [usuario, setUsuario] = useState<string>("");
@@ -29,11 +31,15 @@ export default function LoginScreen() {
 
     const response = await startPostLogin.mutateAsync({ usuario, password });
 
+    if (!response.usuario) return;
+
     if (response.ok) {
       mensaje("success", "¡Usuario logueado correctamente!");
-      if (response.rol === "empleado") {
+      setUsuarioStore(response.usuario);
+
+      if (response.usuario.rol === "empleado") {
         router.replace("/create");
-      } else if (response.rol === "admin") {
+      } else if (response.usuario.rol === "admin") {
         router.replace("/stock");
       }
     } else {

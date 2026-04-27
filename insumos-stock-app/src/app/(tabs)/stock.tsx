@@ -4,14 +4,14 @@ import ModalAddInsumo from "@/src/components/stock/ModalAddInsumo";
 import Loading from "@/src/components/ui/Loading";
 import { useStock } from "@/src/hooks/data/useData";
 import { useStockStore } from "@/src/store/useStockStore";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StockScreen() {
   const { data: stock, isLoading, refetch } = useStock();
   const [refreshing, setRefreshing] = useState(false);
-  const { modalOpen, closeModal } = useStockStore();
+  const { modalOpen, closeModal, buscador } = useStockStore();
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -19,12 +19,21 @@ export default function StockScreen() {
     setRefreshing(false);
   };
 
+  const filteredStock = useMemo(() => {
+    if (!stock) return [];
+    if (!buscador) return stock;
+
+    return stock.filter((item) =>
+      item.nombre.toLowerCase().includes(buscador.toLowerCase()),
+    );
+  }, [stock, buscador]);
+
   if (isLoading) {
     return <Loading text="Cargando datos Stock" />;
   }
 
   return (
-    <SafeAreaView className="flex-1 p-4 bg-neutral-100 dark:bg-neutral-900">
+    <SafeAreaView className="flex-1 px-4 bg-neutral-100 dark:bg-neutral-900">
       {/* Header Section */}
       <View className="mb-8">
         <Text className="text-4xl font-black text-neutral-800 dark:text-white tracking-tight">
@@ -37,18 +46,18 @@ export default function StockScreen() {
 
       {/* Filters Section */}
       <View className="mb-8">
-        <FiltersStock />
+        <FiltersStock filteredStock={filteredStock} />
       </View>
 
       {/* Stock List Card */}
       <FlatList
-        data={stock ?? []}
+        data={filteredStock}
         ListEmptyComponent={<EmptyData />}
         renderItem={({ item, index }) => (
           <ListStockItem
             key={item.id_insumo}
             item={item}
-            isLast={index === (stock?.length ?? 0) - 1}
+            isLast={index === (filteredStock?.length ?? 0) - 1}
           />
         )}
         refreshControl={
