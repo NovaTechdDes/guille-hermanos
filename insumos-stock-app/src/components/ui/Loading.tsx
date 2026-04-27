@@ -1,14 +1,17 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
+import { colors } from "../../theme/colors";
+
 interface Props {
-  text: string;
+  text?: string;
 }
 
-export default function Loading({ text }: Props) {
+export default function Loading({ text = "Cargando..." }: Props) {
   return (
     <View className="flex-1 items-center justify-center bg-neutral-100 dark:bg-neutral-900">
-      <Text className="text-lg font-bold text-black dark:text-white">
-        Cargando...
+      <ActivityIndicator size="large" color={colors.primary} />
+      <Text className="mt-4 text-neutral-500 dark:text-neutral-400 font-bold tracking-tight">
+        {text}
       </Text>
     </View>
   );

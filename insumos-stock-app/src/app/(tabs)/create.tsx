@@ -1,14 +1,22 @@
 import Loading from "@/src/components/ui/Loading";
-import { useTheme } from "@/src/hooks";
 import { useData } from "@/src/hooks/data/useData";
+import { colors } from "@/src/theme/colors";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  useColorScheme,
+} from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function Create() {
-  const { isDark } = useTheme();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
   const { data, isLoading } = useData();
 
   const { bodegas, provedores, destinos, insumos } = data || {
@@ -33,34 +41,34 @@ export default function Create() {
     style: [
       styles.dropdown,
       {
-        backgroundColor: isDark ? "#1e293b" : "#f9fafb",
-        borderColor: isDark ? "#334155" : "#6B7280",
+        backgroundColor: isDark ? "#262626" : "#F9FAFB",
+        borderColor: isDark ? "#404040" : "#E5E7EB",
       },
     ],
     placeholderStyle: [
       styles.placeholderStyle,
-      { color: isDark ? "#94a3b8" : "#6B7280" },
+      { color: isDark ? "#737373" : "#A3A3A3" },
     ],
     selectedTextStyle: [
       styles.selectedTextStyle,
-      { color: isDark ? "white" : "black" },
+      { color: isDark ? "#F5F5F5" : "#171717" },
     ],
     inputSearchStyle: [
       styles.inputSearchStyle,
       {
         color: isDark ? "white" : "black",
-        backgroundColor: isDark ? "#0f172a" : "white",
+        backgroundColor: isDark ? "#171717" : "white",
       },
     ],
     containerStyle: [
       styles.containerStyle,
       {
-        backgroundColor: isDark ? "#0f172a" : "white",
-        borderColor: isDark ? "#334155" : "#e2e8f0",
+        backgroundColor: isDark ? "#171717" : "white",
+        borderColor: isDark ? "#404040" : "#E5E7EB",
       },
     ],
-    itemTextStyle: { color: isDark ? "white" : "black" },
-    activeColor: isDark ? "#334155" : "#f1f5f9",
+    itemTextStyle: { color: isDark ? "#D4D4D4" : "#171717" },
+    activeColor: isDark ? "#262626" : "#F5F5F5",
   };
 
   if (isLoading) {
@@ -68,203 +76,269 @@ export default function Create() {
   }
 
   return (
-    <KeyboardAwareScrollView
-      className="w-full max-w-4xl bg-neutral-100 dark:bg-neutral-900 pt-12"
-      enableOnAndroid
-      extraScrollHeight={58}
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{
-        paddingHorizontal: 32,
-        paddingTop: 50,
-        paddingBottom: 28,
-      }}
-    >
-      <Text className="text-2xl font-bold text-black dark:text-white">
-        Registrar Movimiento
-      </Text>
-      <Text className="text-lg text-neutral-600 dark:text-neutral-400">
-        Complete los datos del suministro de carga
-      </Text>
-
-      <View className="gap-5">
-        {/* Tipo de operacion */}
-        <View>
-          <Text>Tipo de operacion</Text>
-
-          <View className="flex-row bg-gray-200 justify-around rounded-xl mt-2 p-2">
-            <Pressable
-              className={`flex-row items-center gap-2 w-1/2 justify-center p-2 rounded-xl ${type === "Ingreso" ? "bg-white" : "bg-blue"}`}
-              onPress={() => setType("Ingreso")}
-            >
-              <Ionicons
-                name="arrow-up-outline"
-                size={24}
-                color={type === "Ingreso" ? "green" : "black"}
-              />
-              <Text
-                className={type === "Ingreso" ? "text-green-500" : "text-black"}
-              >
-                Ingreso
-              </Text>
-            </Pressable>
-
-            <Pressable
-              className={`flex-row items-center gap-2 w-1/2 justify-center p-2 rounded-xl ${type === "Egreso" ? "bg-white" : ""}`}
-              onPress={() => setType("Egreso")}
-            >
-              <Ionicons
-                name="arrow-down-outline"
-                size={24}
-                color={type === "Egreso" ? "red" : "black"}
-              />
-              <Text
-                className={type === "Egreso" ? "text-red-500" : "text-black"}
-              >
-                Egreso
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Fecha */}
-        <View>
-          <Text className="text-lg font-bold">Fecha</Text>
-          <View className="flex-row items-center gap-2">
-            <TextInput
-              className="bg-neutral-100 dark:bg-neutral-800 p-2 rounded-xl border border-neutral-500 dark:border-[#334155] w-full"
-              value={fecha}
-              onChangeText={setFecha}
-              placeholder="Fecha"
-              keyboardType="number-pad"
-            />
-          </View>
-        </View>
-
-        {/* Provedor */}
-        {type === "Ingreso" && (
-          <View>
-            <Text className="text-lg font-bold">Proveedor</Text>
-            <Dropdown
-              data={provedores as any}
-              search
-              {...dropdownStyles}
-              searchPlaceholder="Buscar Provedor..."
-              valueField="id_provedor"
-              labelField="nombre"
-              placeholder="Seleccione el provedor"
-              value={provedor}
-              onChange={(item) => setProvedor(item)}
-            />
-          </View>
-        )}
-
-        {/* Insumo */}
-        <View>
-          <Text className="text-lg font-bold">Insumo</Text>
-          <Dropdown
-            data={insumos as any}
-            search
-            {...dropdownStyles}
-            searchPlaceholder="Buscar Insumo..."
-            valueField="id_insumo"
-            labelField="nombre"
-            placeholder="Seleccione el Insumo"
-            value={insumo}
-            onChange={(item) => setInsumo(item)}
-          />
-        </View>
-
-        {/* Cantidad */}
-        <View>
-          <Text className="text-lg font-bold">Cantidad</Text>
-          <View className="flex-row items-center justify-between gap-2">
-            <TextInput
-              className="bg-neutral-100 dark:bg-neutral-800 p-2 rounded-xl w-[90%] border border-neutral-500 dark:border-neutral-300"
-              value={cantidad}
-              onChangeText={setCantidad}
-              placeholder="Cantidad"
-              keyboardType="number-pad"
-            />
-            <View className="border rounded-xl p-2">
-              <Text>Un</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Bodega */}
-        <View>
-          <Text className="text-lg font-bold">Bodega</Text>
-          <Dropdown
-            data={bodegas as any}
-            search
-            {...dropdownStyles}
-            searchPlaceholder="Buscar Bodega..."
-            valueField="id_bodega"
-            labelField="nombre"
-            placeholder="Seleccione la Bodega"
-            value={bodega}
-            onChange={(item) => setBodega(item)}
-          />
-        </View>
-
-        {/* Destino */}
-        {type === "Egreso" && (
-          <View>
-            <Text className="text-lg font-bold">Destino</Text>
-            <Dropdown
-              data={destinos as any}
-              search
-              {...dropdownStyles}
-              searchPlaceholder="Buscar Destino..."
-              valueField="id_destino"
-              labelField="nombre"
-              placeholder="Seleccione el Destino"
-              value={destino}
-              onChange={(item) => setDestino(item)}
-            />
-          </View>
-        )}
-
-        <Pressable className="bg-primary w-full rounded-xl p-4 mt-4 justify-center items-center">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-white font-bold text-lg">
-              Confirmar Carga
+    <View className="flex-1 bg-neutral-50 dark:bg-neutral-950">
+      <KeyboardAwareScrollView
+        enableOnAndroid
+        extraScrollHeight={58}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingTop: 60,
+          paddingBottom: 100,
+        }}
+      >
+        {/* Main Form Card */}
+        <View className="bg-white dark:bg-neutral-900 rounded-[32px] p-6 shadow-xl shadow-black/5 border border-neutral-100 dark:border-neutral-800">
+          <View className="mb-8">
+            <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">
+              Registrar Movimiento
             </Text>
-            <Ionicons name="checkmark-circle-outline" size={24} color="white" />
+            <Text className="text-neutral-500 dark:text-neutral-400 font-medium text-sm mt-1">
+              Complete los datos del suministro a cargar.
+            </Text>
           </View>
-        </Pressable>
-      </View>
-    </KeyboardAwareScrollView>
+
+          <View className="gap-6">
+            {/* Tipo de Operación */}
+            <View>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-3 ml-1">
+                Tipo de Operación
+              </Text>
+              <View className="flex-row bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl">
+                <Pressable
+                  onPress={() => setType("Ingreso")}
+                  className={`flex-1 flex-row items-center justify-center py-3 rounded-xl ${
+                    type === "Ingreso"
+                      ? "bg-white dark:bg-neutral-700 shadow-sm"
+                      : ""
+                  }`}
+                >
+                  <Ionicons
+                    name="arrow-up"
+                    size={18}
+                    color={type === "Ingreso" ? colors.secondary : "#A3A3A3"}
+                    className="mr-2"
+                  />
+                  <Text
+                    className={`font-bold text-sm ${
+                      type === "Ingreso"
+                        ? "text-neutral-800 dark:text-white"
+                        : "text-neutral-400"
+                    }`}
+                  >
+                    Ingreso
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => setType("Egreso")}
+                  className={`flex-1 flex-row items-center justify-center py-3 rounded-xl ${
+                    type === "Egreso"
+                      ? "bg-white dark:bg-neutral-700 shadow-sm"
+                      : ""
+                  }`}
+                >
+                  <Ionicons
+                    name="arrow-down"
+                    size={18}
+                    color={type === "Egreso" ? colors.primary : "#A3A3A3"}
+                    className="mr-2"
+                  />
+                  <Text
+                    className={`font-bold text-sm ${
+                      type === "Egreso"
+                        ? "text-neutral-800 dark:text-white"
+                        : "text-neutral-400"
+                    }`}
+                  >
+                    Egreso
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+            {/* Fecha */}
+            <View>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
+                Fecha
+              </Text>
+              <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 h-14 rounded-2xl px-4">
+                <TextInput
+                  className="flex-1 text-neutral-800 dark:text-neutral-100 font-semibold"
+                  value={fecha}
+                  onChangeText={setFecha}
+                  placeholder="dd/mm/aaaa"
+                  placeholderTextColor={isDark ? "#525252" : "#D4D4D4"}
+                />
+                <Ionicons name="calendar-outline" size={20} color="#A3A3A3" />
+              </View>
+            </View>
+            {/* Proveedor / Insumo Grid */}
+            {type === "Ingreso" && (
+              <View>
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
+                  Proveedor
+                </Text>
+                <Dropdown
+                  data={provedores as any}
+                  search
+                  {...dropdownStyles}
+                  searchPlaceholder="Buscar Provedor..."
+                  valueField="id_provedor"
+                  labelField="nombre"
+                  placeholder="Seleccione un proveedor"
+                  value={provedor}
+                  onChange={(item) => setProvedor(item)}
+                  renderRightIcon={() => (
+                    <Ionicons name="chevron-down" size={18} color="#A3A3A3" />
+                  )}
+                />
+              </View>
+            )}
+            <View>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
+                Insumo
+              </Text>
+              <Dropdown
+                data={insumos as any}
+                search
+                {...dropdownStyles}
+                searchPlaceholder="Buscar Insumo..."
+                valueField="id_insumo"
+                labelField="nombre"
+                placeholder="Seleccione un producto"
+                value={insumo}
+                onChange={(item) => setInsumo(item)}
+                renderRightIcon={() => (
+                  <Ionicons name="chevron-down" size={18} color="#A3A3A3" />
+                )}
+              />
+            </View>
+            {/* Cantidad */}
+            <View>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
+                Cantidad
+              </Text>
+              <View className="flex-row items-center gap-3">
+                <View className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 h-14 rounded-2xl px-4 justify-center">
+                  <TextInput
+                    className="text-neutral-800 dark:text-neutral-100 font-bold text-lg"
+                    value={cantidad}
+                    onChangeText={setCantidad}
+                    placeholder="0.00"
+                    placeholderTextColor={isDark ? "#525252" : "#D4D4D4"}
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+                <View className="h-14 px-4 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-2xl items-center justify-center">
+                  <Text className="font-black text-neutral-500 dark:text-neutral-400 text-xs uppercase tracking-tighter">
+                    {insumo?.unidad || "UN"}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            {/* Bodega */}
+            <View>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
+                Bodega Origen
+              </Text>
+              <Dropdown
+                data={bodegas as any}
+                search
+                {...dropdownStyles}
+                searchPlaceholder="Buscar Bodega..."
+                valueField="id_bodega"
+                labelField="nombre"
+                placeholder="Seleccione una bodega"
+                value={bodega}
+                onChange={(item) => setBodega(item)}
+                renderRightIcon={() => (
+                  <Ionicons name="chevron-down" size={18} color="#A3A3A3" />
+                )}
+              />
+            </View>
+
+            {/* Destino (Solo Egreso) */}
+            {type === "Egreso" && (
+              <View className="bg-primary/5 dark:bg-primary/10 p-4 rounded-3xl border border-primary/10">
+                <Text className="text-[10px] font-black text-primary uppercase tracking-[2px] mb-2 ml-1">
+                  Destino del Egreso
+                </Text>
+                <Dropdown
+                  data={destinos as any}
+                  search
+                  {...dropdownStyles}
+                  style={[
+                    dropdownStyles.style,
+                    { backgroundColor: isDark ? "#171717" : "white" },
+                  ]}
+                  searchPlaceholder="Buscar Destino..."
+                  valueField="id_destino"
+                  labelField="nombre"
+                  placeholder="Seleccione Lote / Cliente"
+                  value={destino}
+                  onChange={(item) => setDestino(item)}
+                  renderRightIcon={() => (
+                    <Ionicons
+                      name="chevron-down"
+                      size={18}
+                      color={colors.primary}
+                    />
+                  )}
+                />
+                <Text className="text-[10px] text-primary/60 font-medium mt-2 ml-1">
+                  Este campo es obligatorio para registros de egreso.
+                </Text>
+              </View>
+            )}
+
+            {/* Submit Button */}
+            <Pressable
+              className="bg-primary w-full h-16 rounded-2xl mt-4 justify-center items-center shadow-lg shadow-primary/20"
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.9 : 1,
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+              })}
+            >
+              <View className="flex-row items-center gap-2">
+                <Text className="text-white font-black text-lg uppercase tracking-tight">
+                  Confirmar Carga
+                </Text>
+                <View className="w-6 h-6 bg-white/20 rounded-full items-center justify-center">
+                  <Ionicons name="checkmark" size={16} color="white" />
+                </View>
+              </View>
+            </Pressable>
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   dropdown: {
-    height: 50,
+    height: 56,
     width: "100%",
     borderWidth: 1,
-    borderColor: "#6B7280",
     paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: "#f9fafb",
+    borderRadius: 16,
   },
   placeholderStyle: {
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: "500",
   },
   selectedTextStyle: {
-    fontSize: 16,
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: "600",
   },
   inputSearchStyle: {
     height: 45,
-    fontSize: 16,
-    borderRadius: 8,
+    fontSize: 14,
+    borderRadius: 12,
   },
   containerStyle: {
-    borderRadius: 12,
+    borderRadius: 20,
     marginTop: 8,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: "#e2e8f0", // En un StyleSheet normal esto no se adapta mágicamente, pero la librería suele tener un modo oscuro si le pasas las variables de react-native. Alternativamente, usar className si el componente lo permite.
   },
 });

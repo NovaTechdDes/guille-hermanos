@@ -1,55 +1,72 @@
 import FiltersStock from "@/src/components/stock/FiltersStock";
 import ListStockItem from "@/src/components/stock/ListStockItem";
+import ModalAddInsumo from "@/src/components/stock/ModalAddInsumo";
 import Loading from "@/src/components/ui/Loading";
 import { useStock } from "@/src/hooks/data/useData";
-import React from "react";
-import { FlatList, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useStockStore } from "@/src/store/useStockStore";
+import React, { useState } from "react";
+import { FlatList, RefreshControl, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function StockScreen() {
-  const { data: stock, isLoading } = useStock();
+  const { data: stock, isLoading, refetch } = useStock();
+  const [refreshing, setRefreshing] = useState(false);
+  const { modalOpen, closeModal } = useStockStore();
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    refetch();
+    setRefreshing(false);
+  };
 
   if (isLoading) {
     return <Loading text="Cargando datos Stock" />;
   }
 
   return (
-    <KeyboardAwareScrollView
-      className="w-full max-w-4xl bg-neutral-100 dark:bg-neutral-900 pt-12"
-      enableOnAndroid
-      extraScrollHeight={58}
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{
-        paddingHorizontal: 32,
-        paddingTop: 50,
-        paddingBottom: 28,
-      }}
-    >
-      {/*  Header */}
-      <View className="mb-10">
-        <Text className="text-3xl font-bold mb-2 dark:text-white">
-          Inventario
+    <SafeAreaView className="flex-1 p-4 bg-neutral-100 dark:bg-neutral-900">
+      {/* Header Section */}
+      <View className="mb-8">
+        <Text className="text-4xl font-black text-neutral-800 dark:text-white tracking-tight">
+          Stock
         </Text>
-        <Text className="text-neutral-400">Estado actual de insumos</Text>
+        <Text className="text-neutral-500 dark:text-neutral-400 font-medium mt-1">
+          Control de insumos agroquímicos
+        </Text>
       </View>
 
-      {/*  Filters */}
-      <FiltersStock />
+      {/* Filters Section */}
+      <View className="mb-8">
+        <FiltersStock />
+      </View>
 
-      {/*  List */}
+      {/* Stock List Card */}
       <FlatList
-        data={stock || []}
-        renderItem={({ item }) => <ListStockItem item={item} />}
-        keyExtractor={(item) => item.id_insumo}
-        showsVerticalScrollIndicator={false}
-        className="flex-1 mt-6"
-        ListEmptyComponent={
-          <Text className="text-center text-neutral-500 mt-12">
-            No hay insumos cargados
-          </Text>
+        data={stock ?? []}
+        ListEmptyComponent={<EmptyData />}
+        renderItem={({ item, index }) => (
+          <ListStockItem
+            key={item.id_insumo}
+            item={item}
+            isLast={index === (stock?.length ?? 0) - 1}
+          />
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ paddingBottom: 100 }}
+        keyExtractor={(item) => item.id_insumo.toString()}
       />
-    </KeyboardAwareScrollView>
+
+      {/* Modal Add Inusmo */}
+      <ModalAddInsumo isVisible={modalOpen} onClose={closeModal} />
+    </SafeAreaView>
   );
 }
+
+const EmptyData = () => (
+  <View className="py-20 items-center">
+    <Text className="text-neutral-400 dark:text-neutral-500 font-medium">
+      No hay insumos cargados
+    </Text>
+  </View>
+);

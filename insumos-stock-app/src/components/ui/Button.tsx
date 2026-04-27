@@ -26,10 +26,17 @@ export default function Button({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`p-4 rounded-xl ${variantes[variant]} my-2 ${className}`}
+      className={`flex-row items-center justify-center rounded-2xl ${variantes[variant]} ${className}`}
     >
-      {title && <Text className="text-white text-center font-semibold">{title}</Text>}
-      {icon && <Ionicons name={icon as any} size={24} color="white" />}
+      {icon && (
+        <Ionicons 
+          name={icon as any} 
+          size={24} 
+          color="white" 
+          style={{ marginRight: title ? 8 : 0 }} 
+        />
+      )}
+      {title && <Text className="text-white text-center font-bold">{title}</Text>}
     </TouchableOpacity>
   );
 }
