@@ -11,7 +11,12 @@ export default function Create() {
   const { isDark } = useTheme();
   const { data, isLoading } = useData();
 
-  const { bodegas, provedores, destinos, insumos } = data;
+  const { bodegas, provedores, destinos, insumos } = data || {
+    bodegas: [],
+    provedores: [],
+    destinos: [],
+    insumos: [],
+  };
 
   const [type, setType] = useState<"Ingreso" | "Egreso">("Ingreso");
   const [provedor, setProvedor] = useState<any>(null);
