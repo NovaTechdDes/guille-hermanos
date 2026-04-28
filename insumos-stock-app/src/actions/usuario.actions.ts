@@ -1,13 +1,8 @@
-import usuarios from "../data/usuarios";
-import { Usuario } from "../interface/Usuario";
+import usuarios from '../data/usuarios';
+import { Usuario } from '../interface/Usuario';
 
-export const getUsuario = async (
-  usuario: string,
-  password: string,
-): Promise<Usuario | null> => {
-  const usuarioEncontrado = usuarios.find(
-    (u) => u.usuario === usuario && u.password === password,
-  );
+export const getUsuario = async (usuario: string, password: string): Promise<Usuario | null> => {
+  const usuarioEncontrado = usuarios.find((u) => u.usuario === usuario && u.password === password);
 
   if (!usuarioEncontrado) return null;
 
@@ -22,20 +17,29 @@ export const postLogin = async (usuario: string, password: string) => {
     if (!usuarioEncontrado) {
       return {
         ok: false,
-        message: "Usuario o contraseña incorrectos",
+        message: 'Usuario o contraseña incorrectos',
       };
     }
 
     return {
       ok: true,
-      message: "Usuario logueado correctamente",
+      message: 'Usuario logueado correctamente',
       usuario: usuarioEncontrado,
     };
   } catch (error) {
     console.error(error);
     return {
       ok: false,
-      message: "Error al loguearse",
+      message: 'Error al loguearse',
     };
   }
+};
+
+export const getUsuarioById = async (id: string): Promise<Usuario | null> => {
+  const usuarioEncontrado = usuarios.find((u) => u.id_usuario === id);
+
+  if (!usuarioEncontrado) return null;
+
+  const { password: _password, ...usuarioData } = usuarioEncontrado;
+  return usuarioData;
 };

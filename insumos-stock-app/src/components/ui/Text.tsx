@@ -9,7 +9,7 @@ interface Props {
 
 export default function Text({ children, className = '' }: Props) {
   return (
-    <RNText className={` ${className}` }>
+    <RNText className={`text-neutral-800 dark:text-neutral-100 ${className}`}>
         {children}
     </RNText>
   )

@@ -39,7 +39,7 @@ export default function LoginScreen() {
 
       if (response.usuario.rol === "empleado") {
         router.replace("/create");
-      } else if (response.usuario.rol === "admin") {
+      } else {
         router.replace("/stock");
       }
     } else {
@@ -65,7 +65,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAwareScrollView
-      className="w-full max-w-4xl bg-neutral-100 dark:bg-neutral-900 pt-12"
+      className="w-full max-w-4xl bg-neutral-50 dark:bg-neutral-950 pt-12"
       enableOnAndroid
       extraScrollHeight={58}
       keyboardShouldPersistTaps="handled"
@@ -97,7 +97,7 @@ export default function LoginScreen() {
             </Text>
           </View>
           <TextInput
-            className="w-full h-12 px-4 py-2 border border-gray-300 rounded-lg text-neutral-800 dark:text-white"
+            className="w-full h-12 px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-lg text-neutral-800 dark:text-white"
             placeholder="Usuario"
             placeholderTextColor="#9CA3AF"
             value={usuario}
@@ -116,7 +116,7 @@ export default function LoginScreen() {
             </Text>
           </View>
           <TextInput
-            className="w-full h-12 px-4 py-2 border border-gray-300 rounded-lg text-neutral-800 dark:text-white"
+            className="w-full h-12 px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-lg text-neutral-800 dark:text-white"
             placeholder="Contraseña"
             placeholderTextColor="#9CA3AF"
             secureTextEntry
@@ -137,7 +137,7 @@ export default function LoginScreen() {
         title="Ingresar"
         onPress={handleLogin}
         variant="primary"
-        className="w-full mt-6 flex-row items-center justify-center gap-2 text-black dark:text-white"
+        className="w-full mt-6 py-2 flex-row items-center justify-center gap-2 text-black dark:text-white"
         icon="log-in-outline"
       />
     </KeyboardAwareScrollView>

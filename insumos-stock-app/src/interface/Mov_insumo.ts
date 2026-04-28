@@ -1,5 +1,5 @@
 export interface Mov_insumo {
-  id_mov: string;
+  id_mov?: string;
   fecha: string;
   insumo_id: string;
   observacion: string;
@@ -8,5 +8,9 @@ export interface Mov_insumo {
   provedor_id?: string;
   cantidad: number;
   usuario_id: string;
-  tipo: "Ingreso" | "Egreso";
+  tipo: 'INGRESO' | 'EGRESO';
+  insumo?: { nombre: string; unidad: string };
+  bodega?: { nombre: string };
+  destino?: { nombre: string };
+  provedor?: { nombre: string };
 }

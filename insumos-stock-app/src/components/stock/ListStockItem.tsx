@@ -31,11 +31,11 @@ export default function ListStockItem({ item, isLast }: Props) {
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={handleSelectInsumo}
-      className={`bg-white dark:bg-neutral-800 p-5 flex-row items-center justify-between ${!isLast ? "border-b border-neutral-50 dark:border-neutral-700/50" : ""}`}
+      className={`bg-white dark:bg-neutral-900 p-5 flex-row items-center justify-between ${!isLast ? "border-b border-neutral-50 dark:border-neutral-800/50" : ""}`}
     >
       {/* Left side: Info */}
       <View className="flex-1 mr-4">
-        <View className="bg-neutral-100 dark:bg-neutral-700 self-start px-2 py-0.5 rounded mb-1">
+        <View className="bg-neutral-100 dark:bg-neutral-800 self-start px-2 py-0.5 rounded mb-1">
           <Text className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 tracking-tighter">
             ID-{displayId}
           </Text>

@@ -17,6 +17,13 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: true,
+        headerStyle: {
+          backgroundColor: isDark ? colors.dark.surface : colors.light.surface,
+        },
+        headerTintColor: isDark ? colors.dark.text : colors.light.text,
+        headerTitleStyle: {
+          fontWeight: "800",
+        },
         tabBarIcon: ({ color, focused }) => (
           <Ionicons
             name={focused ? "cube" : "cube-outline"}
@@ -38,12 +45,12 @@ export default function TabsLayout() {
             </Pressable>
           ) : null,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: isDark ? "#404040" : "#A3A3A3",
+        tabBarInactiveTintColor: isDark ? colors.dark.textSecondary : colors.light.textSecondary,
         tabBarStyle: {
           display: usuario?.rol === "empleado" ? "none" : "flex",
-          backgroundColor: isDark ? "#171717" : "#FFFFFF",
+          backgroundColor: isDark ? colors.dark.surface : colors.light.surface,
           borderTopWidth: 1,
-          borderTopColor: isDark ? "#262626" : "#F5F5F5",
+          borderTopColor: isDark ? colors.dark.border : colors.light.border,
           height: 60 + (insets.bottom > 0 ? insets.bottom - 5 : 10),
           paddingBottom: insets.bottom > 0 ? insets.bottom - 5 : 10,
           paddingTop: 10,

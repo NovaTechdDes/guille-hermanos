@@ -33,7 +33,7 @@ export default function StockScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 px-4 bg-neutral-100 dark:bg-neutral-900">
+    <SafeAreaView className="flex-1 px-4 bg-neutral-50 dark:bg-neutral-950">
       {/* Header Section */}
       <View className="mb-8">
         <Text className="text-4xl font-black text-neutral-800 dark:text-white tracking-tight">

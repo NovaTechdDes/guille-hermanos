@@ -28,7 +28,7 @@ export default function FiltersStock({ filteredStock }: Props) {
           shadowRadius: 8,
           elevation: 2,
         }}
-        className="flex-1 flex-row items-center bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700/50 py-3 rounded-2xl px-4"
+        className="flex-1 flex-row items-center bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 py-3 rounded-2xl px-4"
       >
         <Ionicons
           name="search"
