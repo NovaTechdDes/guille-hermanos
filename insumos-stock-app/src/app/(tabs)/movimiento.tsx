@@ -6,9 +6,10 @@ import { useMovimientos } from '@/src/hooks/movimientos/useMovimientos';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MovimientoScreen() {
@@ -17,19 +18,29 @@ export default function MovimientoScreen() {
 
   const { bodegas, insumos, destinos } = data || { bodegas: [], insumos: [] };
 
-  const [desde, setDesde] = useState(new Date());
+  console.log(data);
+
+  const [desde, setDesde] = useState(new Date(new Date().setDate(new Date().getDate() - 7)));
   const [hasta, setHasta] = useState(new Date());
 
   const [bodega, setBodega] = useState(null);
   const [insumo, setInsumo] = useState(null);
   const [destino, setDestino] = useState(null);
 
-  const { data: movimientos, isLoading: isMovimientosLoading } = useMovimientos(
-    desde.toLocaleDateString('en-CA'), // YYYY-MM-DD format
-    hasta.toLocaleDateString('en-CA')
-  );
+  const { data: movimientos, isLoading: isMovimientosLoading } = useMovimientos(desde.toLocaleDateString('en-CA'), hasta.toLocaleDateString('en-CA'));
 
   const [type, setType] = useState<'bodega' | 'destino'>('bodega');
+  const segmentX = useSharedValue(0);
+
+  useEffect(() => {
+    segmentX.value = withSpring(type === 'bodega' ? 0 : 1, { damping: 15 });
+  }, [type]);
+
+  const animatedSegmentStyle = useAnimatedStyle(() => {
+    return {
+      left: `${segmentX.value * 50}%`,
+    };
+  });
 
   const [showDesde, setShowDesde] = useState(false);
   const [showHasta, setShowHasta] = useState(false);
@@ -43,24 +54,16 @@ export default function MovimientoScreen() {
     return matchBodega && matchInsumo && matchDestino;
   });
 
-  const handleType = () => {
-    if (type === 'bodega') {
-      setType('destino');
-    } else {
-      setType('bodega');
-    }
-  };
-
   const dropdownStyles = {
     style: [
       styles.dropdown,
       {
-        backgroundColor: isDark ? '#262626' : '#F9FAFB',
-        borderColor: isDark ? '#404040' : '#E5E7EB',
+        backgroundColor: isDark ? '#171717' : '#FFFFFF',
+        borderColor: isDark ? '#262626' : '#F3F4F6',
       },
     ],
-    placeholderStyle: [styles.placeholderStyle, { color: isDark ? '#737373' : '#A3A3A3' }],
-    selectedTextStyle: [styles.selectedTextStyle, { color: isDark ? '#F5F5F5' : '#171717' }],
+    placeholderStyle: [styles.placeholderStyle, { color: isDark ? '#737373' : '#9CA3AF' }],
+    selectedTextStyle: [styles.selectedTextStyle, { color: isDark ? '#F5F5F5' : '#111827' }],
     inputSearchStyle: [
       styles.inputSearchStyle,
       {
@@ -72,147 +75,156 @@ export default function MovimientoScreen() {
       styles.containerStyle,
       {
         backgroundColor: isDark ? '#171717' : 'white',
-        borderColor: isDark ? '#404040' : '#E5E7EB',
+        borderColor: isDark ? '#262626' : '#E5E7EB',
       },
     ],
-    itemTextStyle: { color: isDark ? '#D4D4D4' : '#171717' },
-    activeColor: isDark ? '#262626' : '#F5F5F5',
+    itemTextStyle: { color: isDark ? '#D4D4D4' : '#1F2937' },
+    activeColor: isDark ? '#262626' : '#F9FAFB',
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      {/* Header Filters */}
-      <View className="p-4 bg-white dark:bg-neutral-900 shadow-sm">
-        {/* Date Selectors */}
-        <View className="flex-row gap-4 mb-4">
-          <Pressable onPress={() => setShowDesde(true)} className="flex-1">
-            <Text className="text-neutral-500 dark:text-neutral-400 text-xs mb-1 ml-1">Desde</Text>
-            <View className="flex-row items-center justify-between border border-neutral-200 dark:border-neutral-800 p-3 rounded-lg">
-              <Text className="text-neutral-900 dark:text-neutral-100">{desde.toLocaleDateString()}</Text>
-              <Ionicons name="calendar-outline" size={18} color="#A3A3A3" />
-            </View>
-            {showDesde && (
-              <DateTimePicker
-                value={desde}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setShowDesde(false);
-                  if (date) setDesde(date);
-                }}
-              />
-            )}
-          </Pressable>
-
-          <Pressable onPress={() => setShowHasta(true)} className="flex-1">
-            <Text className="text-neutral-500 dark:text-neutral-400 text-xs mb-1 ml-1">Hasta</Text>
-            <View className="flex-row items-center justify-between border border-neutral-200 dark:border-neutral-800 p-3 rounded-lg">
-              <Text className="text-neutral-900 dark:text-neutral-100">{hasta.toLocaleDateString()}</Text>
-              <Ionicons name="calendar-outline" size={18} color="#A3A3A3" />
-            </View>
-            {showHasta && (
-              <DateTimePicker
-                value={hasta}
-                mode="date"
-                display="default"
-                onChange={(event, date) => {
-                  setShowHasta(false);
-                  if (date) setHasta(date);
-                }}
-              />
-            )}
-          </Pressable>
-        </View>
-
-        {/* Segmented Control */}
-        <View className="flex-row bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl mb-4 justify-around py-5">
-          <Pressable onPress={handleType}>
-            <Text className={clsx('font-bold', type === 'bodega' ? 'text-orange-900 dark:text-orange-200' : 'text-neutral-500')}>Bodega</Text>
-          </Pressable>
-          <Pressable onPress={handleType}>
-            <Text className={clsx('font-bold', type === 'destino' ? 'text-orange-900 dark:text-orange-200' : 'text-neutral-500')}>Destino</Text>
-          </Pressable>
-        </View>
-
-        {/* Search Bars */}
-        <View className="gap-2">
-          {type === 'bodega' && (
-            <View className="flex-row items-center border border-neutral-200 dark:border-neutral-800 px-3 rounded-lg">
-              <Ionicons name="location-sharp" size={20} color="#7c2d12" />
-              <Dropdown
-                data={bodegas}
-                search
-                {...dropdownStyles}
-                style={[dropdownStyles.style, { borderWidth: 0, flex: 1 }]}
-                searchPlaceholder="Buscar Bodega..."
-                valueField="id_bodega"
-                labelField="nombre"
-                placeholder="Buscar bodega..."
-                value={bodega}
-                onChange={(item) => setBodega(item)}
-                renderRightIcon={() => null}
-              />
-            </View>
-          )}
-
-          {type === 'destino' && (
-            <View className="flex-row items-center border border-neutral-200 dark:border-neutral-800 px-3 rounded-lg">
-              <Ionicons name="location-sharp" size={20} color="#7c2d12" />
-              <Dropdown
-                data={destinos}
-                search
-                {...dropdownStyles}
-                style={[dropdownStyles.style, { borderWidth: 0, flex: 1 }]}
-                searchPlaceholder="Buscar Destino..."
-                valueField="id_destino"
-                labelField="nombre"
-                placeholder="Buscar destino..."
-                value={destino}
-                onChange={(item) => setDestino(item)}
-                renderRightIcon={() => null}
-              />
-            </View>
-          )}
-
-          <View className="flex-row items-center border border-neutral-200 dark:border-neutral-800 px-3 rounded-lg">
-            <Ionicons name="cube-sharp" size={20} color="#7c2d12" />
-            <Dropdown
-              data={insumos as any}
-              search
-              {...dropdownStyles}
-              style={[dropdownStyles.style, { borderWidth: 0, flex: 1 }]}
-              searchPlaceholder="Buscar Insumo..."
-              valueField="id_insumo"
-              labelField="nombre"
-              placeholder="Buscar insumo..."
-              value={insumo}
-              onChange={(item) => setInsumo(item)}
-              renderRightIcon={() => null}
-            />
-          </View>
-        </View>
-      </View>
-
-      {/* List Header */}
-      <View className="flex-row justify-between items-center px-4 py-6">
-        <Text className="text-neutral-900 dark:text-neutral-100 font-bold text-lg">Movimientos Recientes</Text>
-        <Text className="text-neutral-400 dark:text-neutral-500 text-xs font-bold uppercase">
-          {new Date().toLocaleDateString('es-ES', {
-            month: 'long',
-            year: 'numeric',
-          })}
-        </Text>
-      </View>
-
-      {/* movimientos */}
+    <SafeAreaView className="flex-1 bg-neutral-50 dark:bg-neutral-950">
       <FlatList
         data={filteredMovimientos}
         renderItem={({ item }) => <MovimientoItem movimiento={item} />}
-        keyExtractor={(item) => item.id_mov}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        keyExtractor={(item) => item.id_mov!}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+        ListHeaderComponent={
+          <>
+            {/* Header Filters */}
+            <View className="px-6 pt-4 pb-8 bg-white dark:bg-neutral-900 rounded-b-[40px] shadow-xl shadow-black/5 border-b border-neutral-100 dark:border-neutral-800">
+              <Text className="text-3xl font-black text-neutral-800 dark:text-white tracking-tight mb-6">Historial</Text>
+
+              {/* Date Selectors */}
+              <View className="flex-row gap-3 mb-6">
+                <Pressable
+                  onPress={() => setShowDesde(true)}
+                  className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+                >
+                  <View>
+                    <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Desde</Text>
+                    <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{desde.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</Text>
+                  </View>
+                  <Ionicons name="calendar" size={18} color="#34d399" />
+                  {showDesde && (
+                    <DateTimePicker
+                      value={desde}
+                      mode="date"
+                      display="default"
+                      onChange={(event, date) => {
+                        setShowDesde(false);
+                        if (date) setDesde(date);
+                      }}
+                    />
+                  )}
+                </Pressable>
+
+                <Pressable
+                  onPress={() => setShowHasta(true)}
+                  className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+                >
+                  <View>
+                    <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Hasta</Text>
+                    <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{hasta.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</Text>
+                  </View>
+                  <Ionicons name="calendar" size={18} color="#34d399" />
+                  {showHasta && (
+                    <DateTimePicker
+                      value={hasta}
+                      mode="date"
+                      display="default"
+                      onChange={(event, date) => {
+                        setShowHasta(false);
+                        if (date) setHasta(date);
+                      }}
+                    />
+                  )}
+                </Pressable>
+              </View>
+
+              {/* Segmented Control */}
+              <View className="bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl mb-6 relative flex-row h-14 overflow-hidden">
+                <Animated.View className="absolute top-1 bottom-1 w-[48%] bg-white dark:bg-neutral-700 rounded-xl shadow-sm" style={animatedSegmentStyle} />
+                <Pressable onPress={() => setType('bodega')} className="flex-1 items-center justify-center">
+                  <Text className={clsx('font-black text-xs uppercase tracking-widest', type === 'bodega' ? 'text-primary' : 'text-neutral-500')}>Bodega</Text>
+                </Pressable>
+                <Pressable onPress={() => setType('destino')} className="flex-1 items-center justify-center">
+                  <Text className={clsx('font-black text-xs uppercase tracking-widest', type === 'destino' ? 'text-primary' : 'text-neutral-500')}>Destino</Text>
+                </Pressable>
+              </View>
+
+              {/* Dropdown Filters */}
+              <View className="gap-3">
+                <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14">
+                  <Ionicons name={type === 'bodega' ? 'business' : 'trail-sign'} size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                  <Dropdown
+                    data={type === 'bodega' ? (bodegas as any) : (destinos as any)}
+                    search
+                    {...dropdownStyles}
+                    style={[dropdownStyles.style, { borderWidth: 0, flex: 1, backgroundColor: 'transparent' }]}
+                    searchPlaceholder={type === 'bodega' ? 'Buscar Bodega...' : 'Buscar Destino...'}
+                    valueField={type === 'bodega' ? 'id_bodega' : 'id_destino'}
+                    labelField="nombre"
+                    placeholder={type === 'bodega' ? 'Filtrar por Bodega' : 'Filtrar por Destino'}
+                    value={type === 'bodega' ? bodega : destino}
+                    onChange={(item) => (type === 'bodega' ? setBodega(item) : setDestino(item))}
+                    renderRightIcon={() =>
+                      (type === 'bodega' ? bodega : destino) && (
+                        <Pressable onPress={() => (type === 'bodega' ? setBodega(null) : setDestino(null))}>
+                          <Ionicons name="close-circle" size={18} color="#ef4444" />
+                        </Pressable>
+                      )
+                    }
+                  />
+                </View>
+
+                <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14">
+                  <Ionicons name="leaf" size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                  <Dropdown
+                    data={insumos as any}
+                    search
+                    {...dropdownStyles}
+                    style={[dropdownStyles.style, { borderWidth: 0, flex: 1, backgroundColor: 'transparent' }]}
+                    searchPlaceholder="Buscar Insumo..."
+                    valueField="id_insumo"
+                    labelField="nombre"
+                    placeholder="Filtrar por Insumo"
+                    value={insumo}
+                    onChange={(item) => setInsumo(item)}
+                    renderRightIcon={() =>
+                      insumo && (
+                        <Pressable onPress={() => setInsumo(null)}>
+                          <Ionicons name="close-circle" size={18} color="#ef4444" />
+                        </Pressable>
+                      )
+                    }
+                  />
+                </View>
+              </View>
+            </View>
+
+            {/* List Header Section */}
+            <View className="flex-row justify-between items-end mb-6 px-6 pt-6">
+              <View>
+                <Text className="text-neutral-400 dark:text-neutral-500 text-[10px] font-black uppercase tracking-[2px] mb-1">Resultados</Text>
+                <Text className="text-neutral-800 dark:text-neutral-100 font-black text-xl">{filteredMovimientos?.length || 0} Registros</Text>
+              </View>
+              <View className="bg-primary/10 px-3 py-1.5 rounded-full">
+                <Text className="text-primary font-bold text-xs">
+                  {desde.toLocaleDateString('es-ES', { month: 'short' })} - {hasta.toLocaleDateString('es-ES', { month: 'short' })}
+                </Text>
+              </View>
+            </View>
+          </>
+        }
         ListEmptyComponent={
-          <View className="mt-10 items-center">
-            <Text className="text-neutral-500">No hay movimientos en este rango</Text>
+          <View className="mt-20 items-center justify-center px-10">
+            <View className="w-20 h-20 bg-neutral-100 dark:bg-neutral-800 rounded-full items-center justify-center mb-4">
+              <Ionicons name="search-outline" size={32} color="#A3A3A3" />
+            </View>
+            <Text className="text-neutral-800 dark:text-neutral-100 font-bold text-lg text-center">Sin resultados</Text>
+            <Text className="text-neutral-500 dark:text-neutral-400 text-center mt-2">No encontramos movimientos con los filtros seleccionados.</Text>
           </View>
         }
       />
@@ -224,17 +236,17 @@ const styles = StyleSheet.create({
   dropdown: {
     height: 56,
     width: '100%',
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    borderRadius: 16,
+    paddingHorizontal: 12,
   },
   placeholderStyle: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
+    marginLeft: 8,
   },
   selectedTextStyle: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
+    marginLeft: 8,
   },
   inputSearchStyle: {
     height: 45,
@@ -242,9 +254,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   containerStyle: {
-    borderRadius: 20,
+    borderRadius: 24,
     marginTop: 8,
     overflow: 'hidden',
     borderWidth: 1,
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
   },
 });

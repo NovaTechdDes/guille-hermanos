@@ -1,7 +1,7 @@
 import { getData, getStock } from '@/src/actions/data.actions';
 import { useQuery } from '@tanstack/react-query';
 
-export const useData = (id_usuario: string) => {
+export const useData = (id_usuario?: string) => {
   return useQuery({
     queryKey: ['data', id_usuario],
     queryFn: () => getData(id_usuario),

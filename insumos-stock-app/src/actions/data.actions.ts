@@ -1,8 +1,8 @@
 import { supabase } from '../lib/supabase';
 
-export const getData = async (id_usuario: string) => {
+export const getData = async (id_usuario?: string) => {
   try {
-    const { data, error } = await supabase.rpc('get_app_data', { p_usuario_id: id_usuario });
+    const { data, error } = await supabase.rpc('get_app_data', { p_usuario_id: id_usuario ?? '0' });
 
     if (error) throw error;
 

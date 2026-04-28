@@ -7,10 +7,12 @@ import { useUsuarioStore } from '@/src/store/useUsuarioStore';
 import { colors } from '@/src/theme/colors';
 import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import clsx from 'clsx';
+import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View, useColorScheme } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function Create() {
   const colorScheme = useColorScheme();
@@ -31,6 +33,18 @@ export default function Create() {
   const [error, setError] = useState<boolean>(false);
 
   const [type, setType] = useState<'Ingreso' | 'Egreso'>('Ingreso');
+  const typeX = useSharedValue(0);
+
+  useEffect(() => {
+    typeX.value = withSpring(type === 'Ingreso' ? 0 : 1, { damping: 15 });
+  }, [type]);
+
+  const animatedTypeStyle = useAnimatedStyle(() => {
+    return {
+      left: `${typeX.value * 50}%`,
+    };
+  });
+
   const [provedor, setProvedor] = useState<any>(null);
   const [insumo, setInsumo] = useState<any>(null);
   const [cantidad, setCantidad] = useState('');
@@ -139,14 +153,15 @@ export default function Create() {
             {/* Tipo de Operación */}
             <View>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-3 ml-1">Tipo de Operación</Text>
-              <View className="flex-row bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl">
-                <Pressable onPress={() => setType('Ingreso')} className={`flex-1 flex-row items-center justify-center py-3 rounded-xl `}>
-                  <Ionicons name="arrow-up" size={18} color={type === 'Ingreso' ? colors.secondary : '#A3A3A3'} className="mr-2" />
-                  <Text className={`font-bold text-sm ${type === 'Ingreso' ? 'text-green-600 dark:text-green-300' : 'text-neutral-400'}`}>Ingreso</Text>
+              <View className="bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl relative flex-row h-14 overflow-hidden">
+                <Animated.View className="absolute top-1.5 bottom-1.5 w-[48.5%] bg-white dark:bg-neutral-700 rounded-xl shadow-sm" style={animatedTypeStyle} />
+                <Pressable onPress={() => setType('Ingreso')} className="flex-1 items-center justify-center flex-row">
+                  <Ionicons name="arrow-up-circle" size={18} color={type === 'Ingreso' ? '#10b981' : '#A3A3A3'} style={{ marginRight: 6 }} />
+                  <Text className={clsx('font-black text-xs uppercase tracking-widest', type === 'Ingreso' ? 'text-green-600 dark:text-green-400' : 'text-neutral-500')}>Ingreso</Text>
                 </Pressable>
-                <Pressable onPress={() => setType('Egreso')} className={`flex-1 flex-row items-center justify-center py-3 rounded-xl `}>
-                  <Ionicons name="arrow-down" size={18} color={type === 'Egreso' ? colors.primary : '#A3A3A3'} className="mr-2" />
-                  <Text className={`font-bold text-sm ${type === 'Egreso' ? 'text-red-600 dark:text-red-300' : 'text-neutral-400'}`}>Egreso</Text>
+                <Pressable onPress={() => setType('Egreso')} className="flex-1 items-center justify-center flex-row">
+                  <Ionicons name="arrow-down-circle" size={18} color={type === 'Egreso' ? '#ef4444' : '#A3A3A3'} style={{ marginRight: 6 }} />
+                  <Text className={clsx('font-black text-xs uppercase tracking-widest', type === 'Egreso' ? 'text-red-600 dark:text-red-400' : 'text-neutral-500')}>Egreso</Text>
                 </Pressable>
               </View>
             </View>
