@@ -36,6 +36,7 @@ export default function Create() {
 
   const [bodega, setBodega] = useState<any>(null);
   const [destino, setDestino] = useState<any>(null);
+  const [observacion, setObservacion] = useState("");
 
   const dropdownStyles = {
     style: [
@@ -171,6 +172,7 @@ export default function Create() {
                 <Ionicons name="calendar-outline" size={20} color="#A3A3A3" />
               </View>
             </View>
+
             {/* Proveedor / Insumo Grid */}
             {type === "Ingreso" && (
               <View>
@@ -193,6 +195,8 @@ export default function Create() {
                 />
               </View>
             )}
+
+            {/* Insumo */}
             <View>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
                 Insumo
@@ -212,6 +216,7 @@ export default function Create() {
                 )}
               />
             </View>
+
             {/* Cantidad */}
             <View>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
@@ -235,6 +240,7 @@ export default function Create() {
                 </View>
               </View>
             </View>
+
             {/* Bodega */}
             <View>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
@@ -290,6 +296,23 @@ export default function Create() {
               </View>
             )}
 
+            <View>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
+                Observacion
+              </Text>
+              <View className="flex-row items-center gap-3">
+                <View className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 h-14 rounded-2xl px-4 justify-center">
+                  <TextInput
+                    className="text-neutral-800 dark:text-neutral-100 font-bold text-lg"
+                    value={observacion}
+                    onChangeText={setObservacion}
+                    placeholder="Observaciones"
+                    placeholderTextColor={isDark ? "#525252" : "#D4D4D4"}
+                    keyboardType="default"
+                  />
+                </View>
+              </View>
+            </View>
             {/* Submit Button */}
             <Pressable
               className="bg-primary w-full h-16 rounded-2xl mt-4 justify-center items-center shadow-lg shadow-primary/20"

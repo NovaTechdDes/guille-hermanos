@@ -1,5 +1,7 @@
 import { Stock } from "@/src/actions/data.actions";
+import { useStockStore } from "@/src/store/useStockStore";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View, useColorScheme } from "react-native";
 
@@ -10,15 +12,25 @@ interface Props {
 
 export default function ListStockItem({ item, isLast }: Props) {
   const colorScheme = useColorScheme();
+  const { setInsumoSeleccionado } = useStockStore();
   const isDark = colorScheme === "dark";
 
   // Format ID to be shorter if it's too long
   const displayId =
     item.id_insumo?.toString().slice(0, 8).toUpperCase() || "N/A";
 
+  const handleSelectInsumo = () => {
+    setInsumoSeleccionado(item);
+    router.push({
+      pathname: "/stock/[insumoId]",
+      params: { insumoId: item.id_insumo },
+    });
+  };
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
+      onPress={handleSelectInsumo}
       className={`bg-white dark:bg-neutral-800 p-5 flex-row items-center justify-between ${!isLast ? "border-b border-neutral-50 dark:border-neutral-700/50" : ""}`}
     >
       {/* Left side: Info */}

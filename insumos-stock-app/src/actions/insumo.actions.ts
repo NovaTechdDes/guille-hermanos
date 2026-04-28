@@ -26,3 +26,31 @@ export const createNewInsumo = async (
     throw error;
   }
 };
+
+interface Resultado {
+  id_insumo: string;
+  nombre: string;
+  unidad: string;
+  stock_global: number;
+  stock_por_bodega: {
+    bodega_nombre: string;
+    stock: number;
+  }[];
+}
+
+export const getInsumoById = async (id: string): Promise<Resultado | null> => {
+  try {
+    const { data, error } = await supabase.rpc("get_stock_insumo_detalle", {
+      p_id_insumo: id,
+    });
+
+    if (error) {
+      console.error("Error al obtener el insumo por id: ", error);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error("Error al obtener el insumo por id: ", error);
+    return null;
+  }
+};
