@@ -1,18 +1,11 @@
-import { useMutateInsumo } from "@/src/hooks/insumo/useMutateInsumo";
-import { colors } from "@/src/theme/colors";
-import { mensaje } from "@/src/utils/mensaje";
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  useColorScheme,
-} from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import { useMutateInsumo } from '@/src/hooks/insumo/useMutateInsumo';
+import { useStockStore } from '@/src/store/useStockStore';
+import { colors } from '@/src/theme/colors';
+import { mensaje } from '@/src/utils/mensaje';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { Modal, Pressable, StyleSheet, Text, TextInput, View, useColorScheme } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 
 interface ModalAddInsumoProps {
   isVisible: boolean;
@@ -20,22 +13,31 @@ interface ModalAddInsumoProps {
 }
 
 const UNIDADES = [
-  { label: "Kilogramos (KG)", value: "KG" },
-  { label: "Litros (L)", value: "L" },
-  { label: "Unidades (UN)", value: "UN" },
+  { label: 'Kilogramos (KG)', value: 'KG' },
+  { label: 'Litros (L)', value: 'L' },
+  { label: 'Unidades (UN)', value: 'UN' },
 ];
 
-export default function ModalAddInsumo({
-  isVisible,
-  onClose,
-}: ModalAddInsumoProps) {
+export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoProps) {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const { startPostInsumo } = useMutateInsumo();
+  const { startPostInsumo, startPutInsumo } = useMutateInsumo();
+  const { insumoSeleccionado } = useStockStore();
 
-  const [nombre, setNombre] = useState("");
-  const [unidad, setUnidad] = useState<string | null>(null);
+  const [nombre, setNombre] = useState(insumoSeleccionado ? insumoSeleccionado.nombre : '');
+  const [unidad, setUnidad] = useState<string | null>(insumoSeleccionado ? insumoSeleccionado.unidad : '');
   const [error, setError] = useState(false);
+
+  const isDark = colorScheme === 'dark';
+
+  useEffect(() => {
+    if (insumoSeleccionado) {
+      setNombre(insumoSeleccionado.nombre);
+      setUnidad(insumoSeleccionado.unidad);
+    } else {
+      setNombre('');
+      setUnidad('');
+    }
+  }, [insumoSeleccionado]);
 
   const handleAdd = async () => {
     if (!nombre || !unidad) {
@@ -43,26 +45,36 @@ export default function ModalAddInsumo({
       return;
     }
 
+    if (insumoSeleccionado) {
+      const res = await startPutInsumo.mutateAsync({ id: insumoSeleccionado.id_insumo, data: { nombre, unidad } });
+
+      if (res) {
+        mensaje('success', 'Insumo actualizado exitosamente', '');
+        setNombre('');
+        setUnidad(null);
+        setError(false);
+        onClose();
+        return;
+      }
+      mensaje('error', 'Error al actualizar el insumo', '');
+      return;
+    }
+
     const res = await startPostInsumo.mutateAsync({ nombre, unidad });
 
     if (res) {
-      mensaje("success", "Insumo creado exitosamente", "");
-      setNombre("");
+      mensaje('success', 'Insumo creado exitosamente', '');
+      setNombre('');
       setUnidad(null);
       setError(false);
       onClose();
     } else {
-      mensaje("error", "Error al crear el insumo", "");
+      mensaje('error', 'Error al crear el insumo', '');
     }
   };
 
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={isVisible}
-      onRequestClose={onClose}
-    >
+    <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={onClose}>
       <View className="flex-1 justify-center items-center bg-black/60 px-6">
         <View className="bg-white dark:bg-neutral-900 rounded-[32px] w-full p-8 shadow-2xl border border-neutral-100 dark:border-neutral-800">
           {/* Header */}
@@ -71,43 +83,31 @@ export default function ModalAddInsumo({
               <Ionicons name="leaf" size={24} color={colors.primary} />
             </View>
             <View>
-              <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">
-                Nuevo Insumo
-              </Text>
-              <Text className="text-neutral-500 dark:text-neutral-400 font-medium text-xs">
-                Defina el producto y su unidad de medida.
-              </Text>
+              <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Nuevo Insumo</Text>
+              <Text className="text-neutral-500 dark:text-neutral-400 font-medium text-xs">Defina el producto y su unidad de medida.</Text>
             </View>
           </View>
 
           <View className="gap-6">
             {/* Campo Nombre */}
             <View>
-              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
-                Nombre del Insumo
-              </Text>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Nombre del Insumo</Text>
               <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 h-14 rounded-2xl px-4">
                 <TextInput
                   className="flex-1 text-neutral-800 dark:text-neutral-100 font-semibold"
                   placeholder="Ej: Glifosato Premium"
-                  placeholderTextColor={isDark ? "#525252" : "#D4D4D4"}
+                  placeholderTextColor={isDark ? '#525252' : '#D4D4D4'}
                   value={nombre}
                   onChangeText={setNombre}
                 />
                 <Ionicons name="pencil-outline" size={18} color="#A3A3A3" />
               </View>
-              {error && !nombre && (
-                <Text className="text-red-500 text-xs ml-1 mt-2">
-                  El nombre es obligatorio
-                </Text>
-              )}
+              {error && !nombre && <Text className="text-red-500 text-xs ml-1 mt-2">El nombre es obligatorio</Text>}
             </View>
 
             {/* Campo Unidad */}
             <View>
-              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
-                Unidad de Medida
-              </Text>
+              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Unidad de Medida</Text>
               <Dropdown
                 data={UNIDADES}
                 labelField="label"
@@ -118,49 +118,38 @@ export default function ModalAddInsumo({
                 style={[
                   styles.dropdown,
                   {
-                    backgroundColor: isDark ? "#262626" : "#F9FAFB",
-                    borderColor: isDark ? "#404040" : "#E5E7EB",
+                    backgroundColor: isDark ? '#262626' : '#F9FAFB',
+                    borderColor: isDark ? '#404040' : '#E5E7EB',
                   },
                 ]}
                 placeholderStyle={{
-                  color: isDark ? "#737373" : "#A3A3A3",
+                  color: isDark ? '#737373' : '#A3A3A3',
                   fontSize: 14,
-                  fontWeight: "500",
+                  fontWeight: '500',
                 }}
                 selectedTextStyle={{
-                  color: isDark ? "#F5F5F5" : "#171717",
+                  color: isDark ? '#F5F5F5' : '#171717',
                   fontSize: 14,
-                  fontWeight: "600",
+                  fontWeight: '600',
                 }}
                 containerStyle={{
-                  backgroundColor: isDark ? "#171717" : "white",
-                  borderColor: isDark ? "#404040" : "#E5E7EB",
+                  backgroundColor: isDark ? '#171717' : 'white',
+                  borderColor: isDark ? '#404040' : '#E5E7EB',
                   borderRadius: 20,
                   marginTop: 8,
-                  overflow: "hidden",
+                  overflow: 'hidden',
                 }}
-                itemTextStyle={{ color: isDark ? "#D4D4D4" : "#171717" }}
-                activeColor={isDark ? "#262626" : "#F5F5F5"}
-                renderRightIcon={() => (
-                  <Ionicons name="chevron-down" size={18} color="#A3A3A3" />
-                )}
+                itemTextStyle={{ color: isDark ? '#D4D4D4' : '#171717' }}
+                activeColor={isDark ? '#262626' : '#F5F5F5'}
+                renderRightIcon={() => <Ionicons name="chevron-down" size={18} color="#A3A3A3" />}
               />
-              {error && !unidad && (
-                <Text className="text-red-500 text-xs ml-1 mt-2">
-                  La unidad es obligatoria
-                </Text>
-              )}
+              {error && !unidad && <Text className="text-red-500 text-xs ml-1 mt-2">La unidad es obligatoria</Text>}
             </View>
 
             {/* Botones de Acción */}
             <View className="flex-row gap-3 mt-4">
-              <Pressable
-                onPress={onClose}
-                className="flex-1 h-14 bg-neutral-100 dark:bg-neutral-800 rounded-2xl items-center justify-center"
-              >
-                <Text className="text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-tight">
-                  Cancelar
-                </Text>
+              <Pressable onPress={onClose} className="flex-1 h-14 bg-neutral-100 dark:bg-neutral-800 rounded-2xl items-center justify-center">
+                <Text className="text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-tight">Cancelar</Text>
               </Pressable>
 
               <Pressable
@@ -173,9 +162,11 @@ export default function ModalAddInsumo({
                 disabled={startPostInsumo.isPending}
               >
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-white font-black uppercase tracking-tight">
-                    {startPostInsumo.isPending ? "Guardando..." : "Confirmar"}
-                  </Text>
+                  {insumoSeleccionado ? (
+                    <Text className="text-white font-black uppercase tracking-tight">Actualizar</Text>
+                  ) : (
+                    <Text className="text-white font-black uppercase tracking-tight">{startPostInsumo.isPending ? 'Guardando...' : 'Confirmar'}</Text>
+                  )}
                   <Ionicons name="checkmark-circle" size={20} color="white" />
                 </View>
               </Pressable>
@@ -190,7 +181,7 @@ export default function ModalAddInsumo({
 const styles = StyleSheet.create({
   dropdown: {
     height: 56,
-    width: "100%",
+    width: '100%',
     borderWidth: 1,
     paddingHorizontal: 16,
     borderRadius: 16,

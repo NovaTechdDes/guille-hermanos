@@ -1,3 +1,4 @@
+import ListaMovimientosVendedor from '@/src/components/create/ListaMovimientosVendedor';
 import Loading from '@/src/components/ui/Loading';
 import { useData } from '@/src/hooks/data/useData';
 import { useMutateMovimiento } from '@/src/hooks/movimientos/useMutateMovimiento';
@@ -13,17 +14,18 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 export default function Create() {
   const colorScheme = useColorScheme();
-  const { data, isLoading } = useData();
   const { usuario } = useUsuarioStore();
+  const { data, isLoading, refetch, isRefetching } = useData(usuario?.id_usuario || '0');
   const { startPostMovimiento } = useMutateMovimiento();
 
   const isDark = colorScheme === 'dark';
 
-  const { bodegas, provedores, destinos, insumos } = data || {
+  const { bodegas, provedores, destinos, insumos, ultimos_movimientos } = data || {
     bodegas: [],
     provedores: [],
     destinos: [],
     insumos: [],
+    movimientos: [],
   };
 
   const [error, setError] = useState<boolean>(false);
@@ -276,7 +278,8 @@ export default function Create() {
                 </View>
               </View>
             </View>
-            {/* Submit Button */}
+
+            {/* Confirmar Movimiento */}
             <Pressable
               onPress={handleAddMovimiento}
               className="bg-primary w-full h-16 rounded-2xl mt-4 justify-center items-center shadow-lg shadow-primary/20"
@@ -293,6 +296,9 @@ export default function Create() {
               </View>
             </Pressable>
           </View>
+
+          {/* Lista de Movimientos */}
+          {ultimos_movimientos && ultimos_movimientos.length > 0 && <ListaMovimientosVendedor isRefetching={isRefetching} refetch={refetch} movimientos={ultimos_movimientos} />}
         </View>
       </KeyboardAwareScrollView>
     </View>

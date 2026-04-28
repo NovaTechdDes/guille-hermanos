@@ -9,8 +9,8 @@ export interface Mov_insumo {
   cantidad: number;
   usuario_id: string;
   tipo: 'INGRESO' | 'EGRESO';
-  insumo?: { nombre: string; unidad: string };
-  bodega?: { nombre: string };
-  destino?: { nombre: string };
-  provedor?: { nombre: string };
+  insumo?: { id: string; nombre: string; unidad: string };
+  bodega?: { id: string; nombre: string };
+  destino?: { id: string; nombre: string };
+  provedor?: { id: string; nombre: string };
 }

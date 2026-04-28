@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 
 export const getMovimientosForDate = async (desde: string, hasta: string): Promise<Mov_insumo[] | null> => {
   try {
-    console.log(desde, hasta);
     const { data, error } = await supabase
       .from('mov_insumo')
       .select('*, insumo(nombre, unidad), bodega(nombre), destino(nombre), provedor(nombre)')

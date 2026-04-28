@@ -1,17 +1,52 @@
-import { useUsuario } from '@/src/hooks/usuarios/useUsuarios';
+import { useTheme } from '@/src/hooks';
+import { useMutateMovimiento } from '@/src/hooks/movimientos/useMutateMovimiento';
+import { useUsuarioStore } from '@/src/store/useUsuarioStore';
+import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Pressable, Text, View } from 'react-native';
 import { Mov_insumo } from '../../interface/Mov_insumo';
+import ToastConfirmacion from '../ui/ToastConfirmacion';
 
 interface Props {
   movimiento: Mov_insumo;
+  eliminar?: boolean;
 }
 
-export default function MovimientoItem({ movimiento }: Props) {
-  const isIngreso = movimiento.tipo === 'Ingreso' || movimiento.tipo.toUpperCase() === 'INGRESO';
+export default function MovimientoItem({ movimiento, eliminar = false }: Props) {
+  const { isDark } = useTheme();
+  const isIngreso = movimiento.tipo.toUpperCase() === 'INGRESO';
+  const { usuario } = useUsuarioStore();
+  const { startPostMovimiento } = useMutateMovimiento();
 
-  const { data: usuario } = useUsuario(movimiento.usuario_id);
+  const [show, setShow] = useState<boolean>(false);
+
+  const handleDelete = async () => {
+    if (!movimiento.insumo || !movimiento.bodega) return;
+
+    const antiMovmineto: Mov_insumo = {
+      usuario_id: usuario?.id_usuario || '0',
+      insumo_id: movimiento.insumo.id,
+      bodega_id: movimiento.bodega.id,
+      destino_id: movimiento.destino?.id,
+      cantidad: movimiento.cantidad,
+      tipo: movimiento.tipo,
+      observacion: `Anti Movimiento de un insumo eliminado. Usuario: ${usuario?.usuario}.`,
+      fecha: new Date().toISOString(),
+    };
+
+    antiMovmineto.tipo = isIngreso ? 'EGRESO' : 'INGRESO';
+
+    const res = await startPostMovimiento.mutateAsync(antiMovmineto);
+    if (res) {
+      mensaje('success', 'Contra Movimiento Registrado correctamente');
+    } else {
+      mensaje('error', 'Error al eliminar movimiento');
+    }
+
+    setShow(false);
+  };
+
   return (
     <View className="bg-white dark:bg-neutral-900 mx-4 mb-1 border-b border-neutral-100 dark:border-neutral-800">
       <View className="flex-row items-center p-4">
@@ -50,6 +85,24 @@ export default function MovimientoItem({ movimiento }: Props) {
           <Text className="mt-1 text-neutral-400 dark:text-neutral-500 text-md">Vendedor: {usuario?.usuario}</Text>
         </View>
       </View>
+
+      {eliminar && (
+        <View className="px-4 pb-4">
+          <Pressable
+            onPress={() => setShow(true)}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.8 : 1,
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            })}
+            className="flex-row items-center justify-center gap-2 rounded-2xl border border-rose-100 bg-rose-50/30 h-12 dark:border-rose-900/20 dark:bg-rose-900/10"
+          >
+            <Ionicons name="trash-outline" size={18} color={isDark ? '#e11d48' : '#e11d48'} />
+            <Text className="text-rose-600 dark:text-white font-bold text-sm uppercase tracking-widest">Eliminar Registro</Text>
+          </Pressable>
+        </View>
+      )}
+
+      <ToastConfirmacion visible={show} onConfirm={handleDelete} onCancel={() => setShow(false)} mensaje="¿Estás seguro de eliminar este movimiento? (Se revertirá el movimiento)" />
     </View>
   );
 }

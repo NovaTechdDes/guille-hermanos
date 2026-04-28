@@ -1,8 +1,9 @@
-import { supabase } from "../lib/supabase";
+import { supabase } from '../lib/supabase';
 
-export const getData = async () => {
+export const getData = async (id_usuario: string) => {
   try {
-    const { data, error } = await supabase.rpc("get_app_data");
+    const { data, error } = await supabase.rpc('get_app_data', { p_usuario_id: id_usuario });
+
     if (error) throw error;
 
     return data as any;
@@ -20,7 +21,7 @@ export interface Stock {
 
 export const getStock = async (): Promise<Stock[] | undefined> => {
   try {
-    const { data, error } = await supabase.rpc("get_stock_insumos");
+    const { data, error } = await supabase.rpc('get_stock_insumos');
     if (error) throw error;
 
     const stock = data as Stock[];

@@ -1,17 +1,17 @@
-import { useUsuarioStore } from "@/src/store/useUsuarioStore";
-import { colors } from "@/src/theme/colors";
-import { Ionicons } from "@expo/vector-icons";
-import { router, Tabs } from "expo-router";
-import { Pressable, useColorScheme } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useUsuarioStore } from '@/src/store/useUsuarioStore';
+import { colors } from '@/src/theme/colors';
+import { Ionicons } from '@expo/vector-icons';
+import { router, Tabs } from 'expo-router';
+import { Pressable, useColorScheme } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabsLayout() {
   const { usuario } = useUsuarioStore();
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const isDark = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
 
-  const isAdmin = usuario?.rol === "superAdmin";
+  const isAdmin = usuario?.rol === 'superAdmin';
 
   return (
     <Tabs
@@ -22,32 +22,22 @@ export default function TabsLayout() {
         },
         headerTintColor: isDark ? colors.dark.text : colors.light.text,
         headerTitleStyle: {
-          fontWeight: "800",
+          fontWeight: '800',
         },
-        tabBarIcon: ({ color, focused }) => (
-          <Ionicons
-            name={focused ? "cube" : "cube-outline"}
-            size={24}
-            color={color}
-          />
-        ),
+        tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cube' : 'cube-outline'} size={24} color={color} />,
         headerRight: () =>
           isAdmin ? (
             <Pressable
-              onPress={() => router.push("/settings")} // Ruta a tu pantalla de config
+              onPress={() => router.push('/settings')} // Ruta a tu pantalla de config
               style={{ marginRight: 15 }}
             >
-              <Ionicons
-                name="settings-outline"
-                size={24}
-                color={colors.primary}
-              />
+              <Ionicons name="settings-outline" size={24} color={colors.primary} />
             </Pressable>
           ) : null,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: isDark ? colors.dark.textSecondary : colors.light.textSecondary,
         tabBarStyle: {
-          display: usuario?.rol === "empleado" ? "none" : "flex",
+          display: usuario?.rol === 'empleado' ? 'none' : 'flex',
           backgroundColor: isDark ? colors.dark.surface : colors.light.surface,
           borderTopWidth: 1,
           borderTopColor: isDark ? colors.dark.border : colors.light.border,
@@ -59,8 +49,8 @@ export default function TabsLayout() {
         },
         tabBarLabelStyle: {
           fontSize: 10,
-          fontWeight: "800",
-          textTransform: "uppercase",
+          fontWeight: '800',
+          textTransform: 'uppercase',
           letterSpacing: 0.5,
           marginTop: 2,
         },
@@ -69,29 +59,18 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="create"
         options={{
-          title: "Ingreso",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "add-circle" : "add-circle-outline"}
-              size={26}
-              color={color}
-            />
-          ),
+          title: 'Ingreso',
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} size={26} color={color} />,
         }}
       />
 
       <Tabs.Screen
         name="stock"
         options={{
-          title: "Inventario",
+          title: 'Inventario',
+          headerShown: false,
 
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "cube" : "cube-outline"}
-              size={24}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cube' : 'cube-outline'} size={24} color={color} />,
         }}
       />
 
@@ -99,14 +78,8 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="movimiento"
           options={{
-            title: "Historial",
-            tabBarIcon: ({ color, focused }) => (
-              <Ionicons
-                name={focused ? "receipt" : "receipt-outline"}
-                size={24}
-                color={color}
-              />
-            ),
+            title: 'Historial',
+            tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={24} color={color} />,
           }}
         />
       }
