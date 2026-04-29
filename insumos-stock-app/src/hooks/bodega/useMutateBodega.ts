@@ -1,4 +1,4 @@
-import { postBodega } from '@/src/actions';
+import { postBodega, updateBodega } from '@/src/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useMutateBodega = () => {
@@ -11,7 +11,15 @@ export const useMutateBodega = () => {
     },
   });
 
+  const startPutBodega = useMutation({
+    mutationFn: ({ id_bodega, nombre }: { id_bodega: string; nombre: string }) => updateBodega(id_bodega, nombre),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['data'] });
+    },
+  });
+
   return {
     startPostBodega,
+    startPutBodega,
   };
 };

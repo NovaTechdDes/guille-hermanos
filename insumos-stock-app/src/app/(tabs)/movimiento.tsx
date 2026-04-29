@@ -18,8 +18,8 @@ export default function MovimientoScreen() {
 
   const { bodegas, insumos, destinos } = data || { bodegas: [], insumos: [] };
 
-  const [desde, setDesde] = useState(new Date(new Date().setDate(new Date().getDate() - 7)));
-  const [hasta, setHasta] = useState(new Date());
+  const [desde, setDesde] = useState<Date>(new Date(new Date().setDate(new Date().getDate() - 7)));
+  const [hasta, setHasta] = useState<Date>(new Date());
 
   const [bodega, setBodega] = useState(null);
   const [insumo, setInsumo] = useState(null);

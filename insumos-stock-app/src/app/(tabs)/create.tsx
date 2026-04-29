@@ -7,6 +7,7 @@ import { useUsuarioStore } from '@/src/store/useUsuarioStore';
 import { colors } from '@/src/theme/colors';
 import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View, useColorScheme } from 'react-native';
@@ -31,6 +32,7 @@ export default function Create() {
   };
 
   const [error, setError] = useState<boolean>(false);
+  const [show, setShow] = useState(false);
 
   const [type, setType] = useState<'Ingreso' | 'Egreso'>('Ingreso');
   const typeX = useSharedValue(0);
@@ -48,7 +50,7 @@ export default function Create() {
   const [provedor, setProvedor] = useState<any>(null);
   const [insumo, setInsumo] = useState<any>(null);
   const [cantidad, setCantidad] = useState('');
-  const [fecha, setFecha] = useState(new Date().toISOString().slice(0, 10).split('-').reverse().join('/'));
+  const [fecha, setFecha] = useState<Date>(new Date());
 
   const [bodega, setBodega] = useState<any>(null);
   const [destino, setDestino] = useState<any>(null);
@@ -59,7 +61,7 @@ export default function Create() {
     setProvedor(null);
     setInsumo(null);
     setCantidad('');
-    setFecha(new Date().toISOString().slice(0, 10).split('-').reverse().join('/'));
+    setFecha(new Date());
     setBodega(null);
     setDestino(null);
     setObservacion('');
@@ -67,12 +69,12 @@ export default function Create() {
 
   const handleAddMovimiento = async () => {
     if (type === 'Ingreso') {
-      if (!provedor || !insumo || !cantidad || !fecha || !bodega || !observacion) {
+      if (!provedor || !insumo || !cantidad || !fecha || !bodega) {
         setError(true);
         return;
       }
     } else {
-      if (!destino || !cantidad || !fecha || !bodega || !observacion) {
+      if (!destino || !cantidad || !fecha || !bodega) {
         setError(true);
         return;
       }
@@ -82,7 +84,7 @@ export default function Create() {
       provedor_id: provedor?.id_provedor,
       insumo_id: insumo?.id_insumo,
       cantidad: Number(cantidad),
-      fecha: fecha.slice(0, 10).split('/').reverse().join('/'),
+      fecha: fecha.toISOString().split('T')[0],
       bodega_id: bodega?.id_bodega,
       destino_id: destino?.id_destino,
       observacion: observacion,
@@ -166,19 +168,27 @@ export default function Create() {
               </View>
             </View>
             {/* Fecha */}
-            <View>
-              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Fecha</Text>
-              <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 h-14 rounded-2xl px-4">
-                <TextInput
-                  className="flex-1 text-neutral-800 dark:text-neutral-100 font-semibold"
-                  value={fecha}
-                  onChangeText={setFecha}
-                  placeholder="dd/mm/aaaa"
-                  placeholderTextColor={isDark ? '#525252' : '#D4D4D4'}
-                />
-                <Ionicons name="calendar-outline" size={20} color="#A3A3A3" />
+            <Pressable
+              onPress={() => setShow(true)}
+              className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+            >
+              <View>
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Fecha</Text>
+                <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}</Text>
               </View>
-            </View>
+              <Ionicons name="calendar" size={18} color="#34d399" />
+              {show && (
+                <DateTimePicker
+                  value={fecha}
+                  mode="date"
+                  display="default"
+                  onChange={(event, date) => {
+                    setShow(false);
+                    if (date) setFecha(date);
+                  }}
+                />
+              )}
+            </Pressable>
 
             {/* Proveedor / Insumo Grid */}
             {type === 'Ingreso' && (

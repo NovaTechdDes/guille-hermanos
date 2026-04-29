@@ -2,7 +2,7 @@ import { useUsuarioStore } from '@/src/store/useUsuarioStore';
 import { colors } from '@/src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Tabs } from 'expo-router';
-import { Pressable, useColorScheme } from 'react-native';
+import { TouchableOpacity, useColorScheme } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabsLayout() {
@@ -27,12 +27,12 @@ export default function TabsLayout() {
         tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cube' : 'cube-outline'} size={24} color={color} />,
         headerRight: () =>
           isAdmin ? (
-            <Pressable
+            <TouchableOpacity
               onPress={() => router.push('/settings')} // Ruta a tu pantalla de config
               style={{ marginRight: 15 }}
             >
               <Ionicons name="settings-outline" size={24} color={colors.primary} />
-            </Pressable>
+            </TouchableOpacity>
           ) : null,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: isDark ? colors.dark.textSecondary : colors.light.textSecondary,

@@ -1,4 +1,4 @@
-import { postDestino } from '@/src/actions';
+import { postDestino, updateDestino } from '@/src/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useMutateDestino = () => {
@@ -11,7 +11,15 @@ export const useMutateDestino = () => {
     },
   });
 
+  const startPutDestino = useMutation({
+    mutationFn: ({ id_destino, nombre }: { id_destino: string; nombre: string }) => updateDestino(id_destino, nombre),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['data'] });
+    },
+  });
+
   return {
     startPostDestino,
+    startPutDestino,
   };
 };

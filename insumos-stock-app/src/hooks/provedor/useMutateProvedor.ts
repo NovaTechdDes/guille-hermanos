@@ -1,4 +1,4 @@
-import { postProvedor } from '@/src/actions';
+import { postProvedor, updateProvedor } from '@/src/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useMutateProvedor = () => {
@@ -11,7 +11,15 @@ export const useMutateProvedor = () => {
     },
   });
 
+  const startPutProvedor = useMutation({
+    mutationFn: ({ id_provedor, nombre }: { id_provedor: string; nombre: string }) => updateProvedor(id_provedor, nombre),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['data'] });
+    },
+  });
+
   return {
     startPostProvedor,
+    startPutProvedor,
   };
 };
