@@ -42,7 +42,7 @@ export default function FiltersStock({ filteredStock }: Props) {
         />
       </View>
 
-      {usuario?.rol === 'superAdmin' && <Button variant="primary" icon="add" onPress={handleAddInsumo} className="h-14 w-14 rounded-2xl m-0" />}
+      {usuario?.rol === 'SUPERADMIN' && <Button variant="primary" icon="add" onPress={handleAddInsumo} className="h-14 w-14 rounded-2xl m-0" />}
     </View>
   );
 }

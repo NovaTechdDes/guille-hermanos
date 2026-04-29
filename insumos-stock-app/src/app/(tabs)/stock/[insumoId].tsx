@@ -72,7 +72,7 @@ export default function InsumoIdScreen() {
             <MaterialCommunityIcons name="history" size={20} color="white" />
             <Text className="text-white font-bold ml-2">Ver Movimientos</Text>
           </TouchableOpacity>
-          {usuario?.rol === 'superAdmin' && (
+          {usuario?.rol === 'SUPERADMIN' && (
             <TouchableOpacity
               onPress={handleEditar}
               className="bg-white dark:bg-neutral-800 py-3 rounded-xl flex-row justify-center items-center flex-1 ml-2 border border-neutral-200 dark:border-neutral-700"

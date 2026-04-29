@@ -1,16 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
-import { TextInput, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "../components/ui/Button";
-import Checkbox from "../components/ui/Checkbox";
-import Text from "../components/ui/Text";
-import { useTheme } from "../hooks";
-import { useMutateUsuario } from "../hooks/usuarios/useMutateUsuario";
-import { useUsuarioStore } from "../store/useUsuarioStore";
-import { mensaje } from "../utils/mensaje";
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { TextInput, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Button from '../components/ui/Button';
+import Checkbox from '../components/ui/Checkbox';
+import Text from '../components/ui/Text';
+import { useTheme } from '../hooks';
+import { useMutateUsuario } from '../hooks/usuarios/useMutateUsuario';
+import { useUsuarioStore } from '../store/useUsuarioStore';
+import { mensaje } from '../utils/mensaje';
 
 export default function LoginScreen() {
   const { isDark } = useTheme();
@@ -19,14 +19,14 @@ export default function LoginScreen() {
   const { setUsuario: setUsuarioStore } = useUsuarioStore();
 
   const [recordarme, setRecordarme] = useState<boolean>(false);
-  const [usuario, setUsuario] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [usuario, setUsuario] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   const handleLogin = async () => {
     if (recordarme) {
-      await AsyncStorage.setItem("usuario", usuario);
+      await AsyncStorage.setItem('usuario', usuario);
     } else {
-      await AsyncStorage.removeItem("usuario");
+      await AsyncStorage.removeItem('usuario');
     }
 
     const response = await startPostLogin.mutateAsync({ usuario, password });
@@ -34,25 +34,21 @@ export default function LoginScreen() {
     if (!response.usuario) return;
 
     if (response.ok) {
-      mensaje("success", "¡Usuario logueado correctamente!");
+      mensaje('success', '¡Usuario logueado correctamente!');
       setUsuarioStore(response.usuario);
 
-      if (response.usuario.rol === "empleado") {
-        router.replace("/create");
+      if (response.usuario.rol === 'EMPLEADO') {
+        router.replace('/create');
       } else {
-        router.replace("/stock");
+        router.replace('/stock');
       }
     } else {
-      mensaje(
-        "error",
-        "Error al loguearse",
-        "Usuario o contraseña incorrectos",
-      );
+      mensaje('error', 'Error al loguearse', 'Usuario o contraseña incorrectos');
     }
   };
 
   const loadUser = async () => {
-    const remember = await AsyncStorage.getItem("usuario");
+    const remember = await AsyncStorage.getItem('usuario');
     if (remember) {
       setUsuario(remember);
       setRecordarme(true);
@@ -76,25 +72,15 @@ export default function LoginScreen() {
       }}
     >
       <View className="items-center mb-8">
-        <Text className="text-4xl font-bold text-neutral-900 dark:text-white">
-          Bienvenido
-        </Text>
-        <Text className="text-xl text-neutral-600 dark:text-neutral-400">
-          Ingrese sus crendenciales para acceder
-        </Text>
+        <Text className="text-4xl font-bold text-neutral-900 dark:text-white">Bienvenido</Text>
+        <Text className="text-xl text-neutral-600 dark:text-neutral-400">Ingrese sus crendenciales para acceder</Text>
       </View>
 
       <View className="w-full gap-6">
         <View className="gap-5">
           <View className="flex-row items-center gap-2">
-            <Ionicons
-              name="person"
-              size={24}
-              color={isDark ? "white" : "black"}
-            />
-            <Text className="text-lg font-bold text-neutral-600 dark:text-white">
-              Usuario
-            </Text>
+            <Ionicons name="person" size={24} color={isDark ? 'white' : 'black'} />
+            <Text className="text-lg font-bold text-neutral-600 dark:text-white">Usuario</Text>
           </View>
           <TextInput
             className="w-full h-12 px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-lg text-neutral-800 dark:text-white"
@@ -106,14 +92,8 @@ export default function LoginScreen() {
         </View>
         <View className="gap-5">
           <View className="flex-row items-center gap-2">
-            <Ionicons
-              name="lock-closed"
-              size={24}
-              color={isDark ? "white" : "black"}
-            />
-            <Text className="text-lg font-bold text-neutral-600 dark:text-white">
-              Contraseña
-            </Text>
+            <Ionicons name="lock-closed" size={24} color={isDark ? 'white' : 'black'} />
+            <Text className="text-lg font-bold text-neutral-600 dark:text-white">Contraseña</Text>
           </View>
           <TextInput
             className="w-full h-12 px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-lg text-neutral-800 dark:text-white"
@@ -125,21 +105,10 @@ export default function LoginScreen() {
           />
         </View>
 
-        <Checkbox
-          label="Recordarme"
-          checked={recordarme}
-          onChange={setRecordarme}
-          className="self-center"
-        />
+        <Checkbox label="Recordarme" checked={recordarme} onChange={setRecordarme} className="self-center" />
       </View>
 
-      <Button
-        title="Ingresar"
-        onPress={handleLogin}
-        variant="primary"
-        className="w-full mt-6 py-2 flex-row items-center justify-center gap-2 text-black dark:text-white"
-        icon="log-in-outline"
-      />
+      <Button title="Ingresar" onPress={handleLogin} variant="primary" className="w-full mt-6 py-2 flex-row items-center justify-center gap-2 text-black dark:text-white" icon="log-in-outline" />
     </KeyboardAwareScrollView>
   );
 }

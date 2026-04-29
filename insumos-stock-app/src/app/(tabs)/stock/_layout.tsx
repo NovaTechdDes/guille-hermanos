@@ -10,7 +10,7 @@ export default function StockLayout() {
   const { usuario } = useUsuarioStore();
   const { isDark } = useTheme();
 
-  const isAdmin = usuario?.rol === 'superAdmin';
+  const isAdmin = usuario?.rol === 'SUPERADMIN';
   return (
     <Stack
       screenOptions={{

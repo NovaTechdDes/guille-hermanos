@@ -1,3 +1,4 @@
+import { supabase } from '@/src/lib/supabase';
 import usuarios from '../data/usuarios';
 import { Usuario } from '../interface/Usuario';
 
@@ -12,7 +13,12 @@ export const getUsuario = async (usuario: string, password: string): Promise<Usu
 
 export const postLogin = async (usuario: string, password: string) => {
   try {
-    const usuarioEncontrado = await getUsuario(usuario, password);
+    const { data: usuarioEncontrado, error } = await supabase.rpc('login_usuario', {
+      p_username: usuario,
+      p_password: password,
+    });
+
+    console.log(usuarioEncontrado, error);
 
     if (!usuarioEncontrado) {
       return {
@@ -44,6 +50,41 @@ export const getUsuarioById = async (id: string): Promise<Usuario | null> => {
   return usuarioData;
 };
 
-export const getAllUsuarios = async () => {
-  return usuarios;
+export const getAllUsuarios = async (): Promise<Usuario[]> => {
+  try {
+    const { data, error } = await supabase.from('usuarios').select('id_usuario, usuario: nombre, rol, activo');
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const toggleActivo = async (id_usuario: string, activo: boolean): Promise<boolean> => {
+  try {
+    const { error } = await supabase.from('usuarios').update({ activo }).eq('id_usuario', id_usuario).select();
+
+    if (error) throw error;
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export const createUser = async (nombre: string, password: string, rol: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase.rpc('crear_usuario', {
+      p_username: nombre,
+      p_password: password,
+      p_rol: rol,
+    });
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 };

@@ -11,7 +11,7 @@ export default function TabsLayout() {
   const isDark = colorScheme === 'dark';
   const insets = useSafeAreaInsets();
 
-  const isAdmin = usuario?.rol === 'superAdmin';
+  const isAdmin = usuario?.rol === 'SUPERADMIN';
 
   return (
     <Tabs
@@ -37,7 +37,7 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: isDark ? colors.dark.textSecondary : colors.light.textSecondary,
         tabBarStyle: {
-          display: usuario?.rol === 'empleado' ? 'none' : 'flex',
+          display: usuario?.rol === 'EMPLEADO' ? 'none' : 'flex',
           backgroundColor: isDark ? colors.dark.surface : colors.light.surface,
           borderTopWidth: 1,
           borderTopColor: isDark ? colors.dark.border : colors.light.border,
