@@ -43,3 +43,7 @@ export const getUsuarioById = async (id: string): Promise<Usuario | null> => {
   const { password: _password, ...usuarioData } = usuarioEncontrado;
   return usuarioData;
 };
+
+export const getAllUsuarios = async () => {
+  return usuarios;
+};
