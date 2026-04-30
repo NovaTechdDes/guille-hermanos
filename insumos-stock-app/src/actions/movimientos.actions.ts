@@ -18,7 +18,6 @@ export const getMovimientosForDate = async (desde: string, hasta: string): Promi
 };
 
 export const addMovimiento = async (movimiento: Mov_insumo): Promise<boolean> => {
-  console.log(movimiento);
   try {
     const { error } = await supabase.from('mov_insumo').insert([movimiento]);
     if (error) throw error;

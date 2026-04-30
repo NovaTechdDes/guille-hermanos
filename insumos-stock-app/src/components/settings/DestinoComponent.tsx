@@ -45,8 +45,6 @@ export default function DestinoComponent() {
     if (res) {
       mensaje('success', 'Destino creado exitosamente');
       setNombre('');
-    } else {
-      mensaje('error', 'Error al crear destino');
     }
   };
 
@@ -92,6 +90,7 @@ export default function DestinoComponent() {
     <View>
       <FlatList
         data={destinos}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListHeaderComponent={renderHeader()}

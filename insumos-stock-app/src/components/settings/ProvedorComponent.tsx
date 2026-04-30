@@ -43,8 +43,6 @@ export default function ProvedorComponet() {
     if (res) {
       mensaje('success', 'Proveedor creado exitosamente');
       setNombre('');
-    } else {
-      mensaje('error', 'Error al crear proveedor');
     }
   };
 
@@ -90,6 +88,7 @@ export default function ProvedorComponet() {
     <View>
       <FlatList
         data={provedores}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListHeaderComponent={renderHeader()}

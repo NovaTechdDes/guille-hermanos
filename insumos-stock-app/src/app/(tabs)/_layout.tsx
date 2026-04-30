@@ -41,8 +41,8 @@ export default function TabsLayout() {
           backgroundColor: isDark ? colors.dark.surface : colors.light.surface,
           borderTopWidth: 1,
           borderTopColor: isDark ? colors.dark.border : colors.light.border,
-          height: 60 + (insets.bottom > 0 ? insets.bottom - 5 : 10),
-          paddingBottom: insets.bottom > 0 ? insets.bottom - 5 : 10,
+          height: 67 + insets.bottom,
+          paddingBottom: insets.bottom,
           paddingTop: 10,
           elevation: 0,
           shadowOpacity: 0,
@@ -74,15 +74,21 @@ export default function TabsLayout() {
         }}
       />
 
-      {
-        <Tabs.Screen
-          name="movimiento"
-          options={{
-            title: 'Historial',
-            tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={24} color={color} />,
-          }}
-        />
-      }
+      <Tabs.Screen
+        name="movimiento"
+        options={{
+          title: 'Historial',
+          tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'receipt' : 'receipt-outline'} size={24} color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Configuración',
+          href: null,
+        }}
+      />
     </Tabs>
   );
 }

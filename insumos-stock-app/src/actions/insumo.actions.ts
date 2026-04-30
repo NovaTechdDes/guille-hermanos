@@ -16,7 +16,7 @@ export const createNewInsumo = async (data: Partial<Insumo>): Promise<boolean> =
 
     return false;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 };

@@ -1,7 +1,7 @@
 import { useInsumoById } from '@/src/hooks/insumo/useInsumo';
 import { useStockStore } from '@/src/store/useStockStore';
 import { useUsuarioStore } from '@/src/store/useUsuarioStore';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
@@ -102,7 +102,6 @@ export default function InsumoIdScreen() {
         <View className="flex-row justify-between mb-3 px-2">
           <Text className="text-neutral-400 font-bold text-xs w-1/2">UBICACIÓN / BODEGA</Text>
           <Text className="text-neutral-400 font-bold text-xs w-1/4 text-center">CANTIDAD</Text>
-          <Text className="text-neutral-400 font-bold text-xs w-1/4 text-right">ACCIÓN</Text>
         </View>
 
         {/* Table Rows */}
@@ -116,9 +115,6 @@ export default function InsumoIdScreen() {
                 <Text className="text-neutral-800 dark:text-neutral-100 font-bold text-base">
                   {bodega.stock.toLocaleString('es-AR')} {unidadCorta}
                 </Text>
-              </View>
-              <View className="w-1/4 items-end justify-center">
-                <Ionicons name="chevron-forward" size={20} color="#F97316" />
               </View>
             </TouchableOpacity>
           ))}

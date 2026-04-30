@@ -65,6 +65,7 @@ export default function Create() {
     setBodega(null);
     setDestino(null);
     setObservacion('');
+    setError(false);
   };
 
   const handleAddMovimiento = async () => {
@@ -306,15 +307,16 @@ export default function Create() {
 
             {/* Confirmar Movimiento */}
             <Pressable
+              disabled={startPostMovimiento.isPending}
               onPress={handleAddMovimiento}
-              className="bg-primary w-full h-16 rounded-2xl mt-4 justify-center items-center shadow-lg shadow-primary/20"
+              className={clsx('bg-primary w-full h-16 rounded-2xl mt-4 justify-center items-center shadow-lg shadow-primary/20', startPostMovimiento.isPending && 'opacity-50')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.9 : 1,
                 transform: [{ scale: pressed ? 0.98 : 1 }],
               })}
             >
               <View className="flex-row items-center gap-2">
-                <Text className="text-white font-black text-lg uppercase tracking-tight">Confirmar Carga</Text>
+                <Text className="text-white font-black text-lg uppercase tracking-tight">{startPostMovimiento.isPending ? 'Guardando...' : 'Confirmar Carga'}</Text>
                 <View className="w-6 h-6 bg-white/20 rounded-full items-center justify-center">
                   <Ionicons name="checkmark" size={16} color="white" />
                 </View>

@@ -1,7 +1,7 @@
 import { useData } from '@/src/hooks/data/useData';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { FlatList, Pressable, RefreshControl, Text, TextInput, View, useColorScheme } from 'react-native';
+import { FlatList, Pressable, RefreshControl, ScrollView, Text, TextInput, View, useColorScheme } from 'react-native';
 
 import { useMutateBodega } from '@/src/hooks/bodega/useMutateBodega';
 import { mensaje } from '@/src/utils/mensaje';
@@ -37,8 +37,6 @@ export default function BodegaComponent() {
     if (res) {
       mensaje('success', 'Bodega creada exitosamente');
       setNombre('');
-    } else {
-      mensaje('error', 'Error al crear bodega');
     }
   };
 
@@ -91,32 +89,35 @@ export default function BodegaComponent() {
   );
 
   return (
-    <View>
-      <FlatList
-        data={bodegas}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        ListHeaderComponent={renderHeader()}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        keyExtractor={(item) => item.id_bodega}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => {
-              setInitialNombre(item.nombre);
-              setIdBodega(item.id_bodega);
-              setVisible(true);
-            }}
-            className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800/50 rounded-2xl p-4 mb-3"
-          >
-            <View className="w-10 h-10 bg-white dark:bg-neutral-800 rounded-full items-center justify-center mr-3 shadow-sm shadow-black/5">
-              <Ionicons name="business" size={18} color="#3b82f6" />
-            </View>
-            <Text className="text-neutral-800 dark:text-neutral-100 font-bold flex-1">{item.nombre}</Text>
-            <Ionicons name="chevron-forward" size={18} color={isDark ? '#525252' : '#D4D4D4'} />
-          </Pressable>
-        )}
-      />
-      <ToastNombre visible={visible} initialName={initialNombre} onConfirm={handlePutBodega} onCancel={() => setVisible(false)} />
-    </View>
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+      <View>
+        <FlatList
+          data={bodegas}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+          ListHeaderComponent={renderHeader()}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          keyExtractor={(item) => item.id_bodega}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => {
+                setInitialNombre(item.nombre);
+                setIdBodega(item.id_bodega);
+                setVisible(true);
+              }}
+              className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800/50 rounded-2xl p-4 mb-3"
+            >
+              <View className="w-10 h-10 bg-white dark:bg-neutral-800 rounded-full items-center justify-center mr-3 shadow-sm shadow-black/5">
+                <Ionicons name="business" size={18} color="#3b82f6" />
+              </View>
+              <Text className="text-neutral-800 dark:text-neutral-100 font-bold flex-1">{item.nombre}</Text>
+              <Ionicons name="chevron-forward" size={18} color={isDark ? '#525252' : '#D4D4D4'} />
+            </Pressable>
+          )}
+        />
+        <ToastNombre visible={visible} initialName={initialNombre} onConfirm={handlePutBodega} onCancel={() => setVisible(false)} />
+      </View>
+    </ScrollView>
   );
 }

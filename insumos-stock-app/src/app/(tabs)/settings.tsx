@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BodegaComponent from '../components/settings/BodegaComponent';
-import DestinoComponent from '../components/settings/DestinoComponent';
-import ProvedorComponet from '../components/settings/ProvedorComponent';
-import UsuarioComponent from '../components/settings/UsuarioComponent';
+import BodegaComponent from '../../components/settings/BodegaComponent';
+import DestinoComponent from '../../components/settings/DestinoComponent';
+import ProvedorComponet from '../../components/settings/ProvedorComponent';
+import UsuarioComponent from '../../components/settings/UsuarioComponent';
 
 const data = [
   {
@@ -59,27 +59,19 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-50 dark:bg-neutral-950" edges={['top']}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
         {/* Header Section */}
-        <View className="px-6 pt-6 pb-8 bg-white dark:bg-neutral-900 rounded-b-[40px] shadow-xl shadow-black/5 border-b border-neutral-100 dark:border-neutral-800 z-10">
+        <View className="px-6 pt-2 pb-8 bg-white dark:bg-neutral-900 rounded-b-[40px] shadow-xl shadow-black/5 border-b border-neutral-100 dark:border-neutral-800 z-10">
           <View className="flex-row items-center gap-3 mb-2">
             <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center">
               <Ionicons name="shield-checkmark" size={20} color="#f97316" />
             </View>
-            <Text className="text-3xl font-black text-neutral-800 dark:text-white tracking-tight">Admin</Text>
+            <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Admin</Text>
           </View>
-          <Text className="text-neutral-500 dark:text-neutral-400 font-medium text-sm mt-1 ml-1 mb-6">
-            Panel de control para super administradores.
-          </Text>
 
           {/* Section Selector */}
           <View>
-            <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">
-              Módulo Activo
-            </Text>
+            <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Módulo Activo</Text>
             <Dropdown
               data={data}
               {...dropdownStyles}
@@ -90,14 +82,7 @@ export default function SettingsScreen() {
               onChange={(item) => setSelected(item.value)}
               renderLeftIcon={() => {
                 const currentItem = data.find((d) => d.value === selected);
-                return (
-                  <Ionicons 
-                    name={(currentItem?.icon as any) || 'settings'} 
-                    size={20} 
-                    color={isDark ? '#525252' : '#A3A3A3'} 
-                    style={{ marginRight: 12 }} 
-                  />
-                );
+                return <Ionicons name={(currentItem?.icon as any) || 'settings'} size={20} color={isDark ? '#525252' : '#A3A3A3'} style={{ marginRight: 12 }} />;
               }}
               renderRightIcon={() => <Ionicons name="chevron-down" size={18} color="#A3A3A3" />}
             />

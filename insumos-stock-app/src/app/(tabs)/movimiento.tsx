@@ -7,14 +7,14 @@ import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { clsx } from 'clsx';
 import { useEffect, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MovimientoScreen() {
   const { isDark } = useTheme();
-  const { data, isLoading } = useData();
+  const { data, isLoading, refetch } = useData();
 
   const { bodegas, insumos, destinos } = data || { bodegas: [], insumos: [] };
 
@@ -24,6 +24,7 @@ export default function MovimientoScreen() {
   const [bodega, setBodega] = useState(null);
   const [insumo, setInsumo] = useState(null);
   const [destino, setDestino] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { data: movimientos, isLoading: isMovimientosLoading } = useMovimientos(desde.toLocaleDateString('en-CA'), hasta.toLocaleDateString('en-CA'));
 
@@ -51,6 +52,12 @@ export default function MovimientoScreen() {
     const matchDestino = destino ? mov.destino_id === (destino as any).id_destino : true;
     return matchBodega && matchInsumo && matchDestino;
   });
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    refetch();
+    setRefreshing(false);
+  };
 
   const dropdownStyles = {
     style: [
@@ -84,6 +91,7 @@ export default function MovimientoScreen() {
     <SafeAreaView className="flex-1 bg-neutral-50 dark:bg-neutral-950">
       <FlatList
         data={filteredMovimientos}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         renderItem={({ item }) => <MovimientoItem movimiento={item} />}
         keyExtractor={(item) => item.id_mov!}
         showsVerticalScrollIndicator={false}
@@ -169,9 +177,9 @@ export default function MovimientoScreen() {
                     onChange={(item) => (type === 'bodega' ? setBodega(item) : setDestino(item))}
                     renderRightIcon={() =>
                       (type === 'bodega' ? bodega : destino) && (
-                        <Pressable onPress={() => (type === 'bodega' ? setBodega(null) : setDestino(null))}>
-                          <Ionicons name="close-circle" size={18} color="#ef4444" />
-                        </Pressable>
+                        <TouchableOpacity className="ml-8" onPress={() => (type === 'bodega' ? setBodega(null) : setDestino(null))}>
+                          <Ionicons name="close-circle" size={32} color="#ef4444" />
+                        </TouchableOpacity>
                       )
                     }
                   />
@@ -192,9 +200,9 @@ export default function MovimientoScreen() {
                     onChange={(item) => setInsumo(item)}
                     renderRightIcon={() =>
                       insumo && (
-                        <Pressable onPress={() => setInsumo(null)}>
-                          <Ionicons name="close-circle" size={18} color="#ef4444" />
-                        </Pressable>
+                        <TouchableOpacity className="ml-8" onPress={() => setInsumo(null)}>
+                          <Ionicons name="close-circle" size={32} color="#ef4444" />
+                        </TouchableOpacity>
                       )
                     }
                   />

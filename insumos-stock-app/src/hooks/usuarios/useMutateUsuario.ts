@@ -8,12 +8,6 @@ export const useMutateUsuario = () => {
     mutationFn: async ({ usuario, password }: { usuario: string; password: string }) => {
       return await postLogin(usuario, password);
     },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (data) => {
-      console.log(data);
-    },
   });
 
   const startUpdateLogin = useMutation({

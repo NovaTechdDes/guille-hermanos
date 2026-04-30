@@ -10,7 +10,8 @@ export const useMutateMovimiento = () => {
       return await addMovimiento(movimiento);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['data'] });
+      queryClient.invalidateQueries({ queryKey: ['data'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['stock'], refetchType: 'all' });
     },
   });
 
