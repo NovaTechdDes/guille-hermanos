@@ -1,6 +1,6 @@
-# Ejecutar build para probar en tablet android
+# Ejecutar build para probar en Movil android
 
-1. `npx expo prebuild`
+1. Ejecutar `npx expo prebuild`
 2. Ejecutar `npx expo run:android`
 
 # Verificar que no hay errores

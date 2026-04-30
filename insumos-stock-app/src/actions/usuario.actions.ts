@@ -13,14 +13,12 @@ export const getUsuario = async (usuario: string, password: string): Promise<Usu
 
 export const postLogin = async (usuario: string, password: string) => {
   try {
-    const { data: usuarioEncontrado, error } = await supabase.rpc('login_usuario', {
+    const { data: usuarioEncontrado } = await supabase.rpc('login_usuario', {
       p_username: usuario,
       p_password: password,
     });
 
-    console.log(usuarioEncontrado, error);
-
-    if (!usuarioEncontrado) {
+    if (usuarioEncontrado.Error) {
       return {
         ok: false,
         message: 'Usuario o contraseña incorrectos',

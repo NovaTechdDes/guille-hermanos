@@ -31,8 +31,6 @@ export default function LoginScreen() {
 
     const response = await startPostLogin.mutateAsync({ usuario, password });
 
-    if (!response.usuario) return;
-
     if (response.ok) {
       mensaje('success', '¡Usuario logueado correctamente!');
       setUsuarioStore(response.usuario);
@@ -108,7 +106,13 @@ export default function LoginScreen() {
         <Checkbox label="Recordarme" checked={recordarme} onChange={setRecordarme} className="self-center" />
       </View>
 
-      <Button title="Ingresar" onPress={handleLogin} variant="primary" className="w-full mt-6 py-2 flex-row items-center justify-center gap-2 text-black dark:text-white" icon="log-in-outline" />
+      <Button
+        title={startPostLogin.isPending ? 'Ingresando...' : 'Ingresar'}
+        onPress={handleLogin}
+        variant="primary"
+        className="w-full mt-6 py-2 flex-row items-center justify-center gap-2 text-black dark:text-white"
+        icon="log-in-outline"
+      />
     </KeyboardAwareScrollView>
   );
 }
