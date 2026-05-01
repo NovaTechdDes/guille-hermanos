@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { TextInput, View } from 'react-native';
@@ -14,6 +15,7 @@ import { mensaje } from '../utils/mensaje';
 
 export default function LoginScreen() {
   const { isDark } = useTheme();
+  const version = Constants.expoConfig?.version;
 
   const { startPostLogin } = useMutateUsuario();
   const { setUsuario: setUsuarioStore } = useUsuarioStore();
@@ -113,6 +115,10 @@ export default function LoginScreen() {
         className="w-full mt-6 py-2 flex-row items-center justify-center gap-2 text-black dark:text-white"
         icon="log-in-outline"
       />
+
+      <View className="items-center mt-4">
+        <Text className="text-sm text-neutral-600 dark:text-neutral-400">Versión {version}</Text>
+      </View>
     </KeyboardAwareScrollView>
   );
 }

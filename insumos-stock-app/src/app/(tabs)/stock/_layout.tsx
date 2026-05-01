@@ -4,7 +4,7 @@ import { colors } from '@/src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack } from 'expo-router';
 import React from 'react';
-import { Pressable } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 export default function StockLayout() {
   const { usuario } = useUsuarioStore();
@@ -20,12 +20,9 @@ export default function StockLayout() {
         },
         headerRight: () =>
           isAdmin ? (
-            <Pressable
-              onPress={() => router.push('/settings')} // Ruta a tu pantalla de config
-              style={{ marginRight: 15 }}
-            >
+            <TouchableOpacity onPress={() => router.push('/settings')} style={{ marginRight: 15 }}>
               <Ionicons name="settings-outline" size={24} color={colors.primary} />
-            </Pressable>
+            </TouchableOpacity>
           ) : null,
         headerTintColor: isDark ? colors.dark.text : colors.light.text,
         headerTitleStyle: {

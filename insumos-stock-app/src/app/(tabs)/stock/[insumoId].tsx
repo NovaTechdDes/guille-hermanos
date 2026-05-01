@@ -2,7 +2,7 @@ import { useInsumoById } from '@/src/hooks/insumo/useInsumo';
 import { useStockStore } from '@/src/store/useStockStore';
 import { useUsuarioStore } from '@/src/store/useUsuarioStore';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 
@@ -35,11 +35,11 @@ export default function InsumoIdScreen() {
 
   const { nombre, unidad, stock_global, stock_por_bodega } = data;
 
-  const unidadParseada = unidad === 'KG' ? 'Kilogramos' : unidad === 'LT' ? 'Litros' : 'Unidades';
-  const unidadCorta = unidad === 'KG' ? 'kg' : unidad === 'LT' ? 'L' : 'ud';
+  const unidadParseada = unidad === 'KG' ? 'Kilogramos' : unidad === 'L' ? 'Litros' : 'Unidades';
+  const unidadCorta = unidad === 'KG' ? 'kg' : unidad === 'L' ? 'L' : 'UN';
 
   const handleRouterMov = () => {
-    console.log('Ver movimientos');
+    router.push({ pathname: '/(tabs)/movimiento', params: { insumoId: insumoId as string } });
   };
 
   const handleEditar = () => {

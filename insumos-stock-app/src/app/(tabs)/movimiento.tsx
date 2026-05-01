@@ -6,6 +6,7 @@ import { useMovimientos } from '@/src/hooks/movimientos/useMovimientos';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { clsx } from 'clsx';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -16,13 +17,15 @@ export default function MovimientoScreen() {
   const { isDark } = useTheme();
   const { data, isLoading, refetch } = useData();
 
+  const { insumoId } = useLocalSearchParams();
   const { bodegas, insumos, destinos } = data || { bodegas: [], insumos: [] };
 
   const [desde, setDesde] = useState<Date>(new Date(new Date().setDate(new Date().getDate() - 7)));
   const [hasta, setHasta] = useState<Date>(new Date());
 
   const [bodega, setBodega] = useState(null);
-  const [insumo, setInsumo] = useState(null);
+  const [insumo, setInsumo] = useState(insumoId ? insumoId : null);
+
   const [destino, setDestino] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -33,7 +36,13 @@ export default function MovimientoScreen() {
 
   useEffect(() => {
     segmentX.value = withSpring(type === 'bodega' ? 0 : 1, { damping: 15 });
-  }, [type]);
+  }, [type, segmentX]);
+
+  useEffect(() => {
+    if (insumoId) {
+      setInsumo(insumoId);
+    }
+  }, [insumoId]);
 
   const animatedSegmentStyle = useAnimatedStyle(() => {
     return {
@@ -47,9 +56,9 @@ export default function MovimientoScreen() {
   if (isLoading || isMovimientosLoading) return <Loading text="Cargando los datos" />;
 
   const filteredMovimientos = movimientos?.filter((mov) => {
-    const matchBodega = bodega ? mov.bodega_id === (bodega as any).id_bodega : true;
-    const matchInsumo = insumo ? mov.insumo_id === (insumo as any).id_insumo : true;
-    const matchDestino = destino ? mov.destino_id === (destino as any).id_destino : true;
+    const matchBodega = bodega ? mov.bodega_id === bodega : true;
+    const matchInsumo = insumo ? mov.insumo_id === insumo : true;
+    const matchDestino = destino ? mov.destino_id === destino : true;
     return matchBodega && matchInsumo && matchDestino;
   });
 
@@ -174,13 +183,13 @@ export default function MovimientoScreen() {
                     labelField="nombre"
                     placeholder={type === 'bodega' ? 'Filtrar por Bodega' : 'Filtrar por Destino'}
                     value={type === 'bodega' ? bodega : destino}
-                    onChange={(item) => (type === 'bodega' ? setBodega(item) : setDestino(item))}
+                    onChange={(item) => (type === 'bodega' ? setBodega(item.id_bodega) : setDestino(item.id_destino))}
                     renderRightIcon={() =>
-                      (type === 'bodega' ? bodega : destino) && (
+                      (type === 'bodega' ? bodega : destino) ? (
                         <TouchableOpacity className="ml-8" onPress={() => (type === 'bodega' ? setBodega(null) : setDestino(null))}>
                           <Ionicons name="close-circle" size={32} color="#ef4444" />
                         </TouchableOpacity>
-                      )
+                      ) : null
                     }
                   />
                 </View>
@@ -197,13 +206,13 @@ export default function MovimientoScreen() {
                     labelField="nombre"
                     placeholder="Filtrar por Insumo"
                     value={insumo}
-                    onChange={(item) => setInsumo(item)}
+                    onChange={(item) => setInsumo(item.id_insumo)}
                     renderRightIcon={() =>
-                      insumo && (
+                      insumo ? (
                         <TouchableOpacity className="ml-8" onPress={() => setInsumo(null)}>
                           <Ionicons name="close-circle" size={32} color="#ef4444" />
                         </TouchableOpacity>
-                      )
+                      ) : null
                     }
                   />
                 </View>
