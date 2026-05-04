@@ -4,7 +4,7 @@ import { Usuario } from '@/src/interface/Usuario';
 import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Button from '../ui/Button';
 import Loading from '../ui/Loading';
@@ -94,7 +94,7 @@ export default function UsuarioComponent() {
   };
 
   const renderHeader = () => (
-    <ScrollView keyboardShouldPersistTaps="always" contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+    <View className="mb-6 pb-10">
       <View className="mb-6">
         <Text className="text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2 ml-1">Agregar Usuario</Text>
         <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 h-14 mb-4">
@@ -142,14 +142,14 @@ export default function UsuarioComponent() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 
   return (
     <>
       <FlatList
         data={data}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={renderHeader()}
         contentContainerStyle={{ paddingBottom: 20 }}

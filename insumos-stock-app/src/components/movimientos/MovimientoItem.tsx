@@ -86,6 +86,10 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
         </View>
       </View>
 
+      <View className="px-4 pb-2">
+        <Text className="text-neutral-900 dark:text-neutral-100 font-bold text-base leading-tight">Observacion: {movimiento.observacion || 'N/A'}</Text>
+      </View>
+
       {eliminar && (
         <View className="px-4 pb-4">
           <Pressable
