@@ -13,10 +13,17 @@ export const getUsuario = async (usuario: string, password: string): Promise<Usu
 
 export const postLogin = async (usuario: string, password: string) => {
   try {
-    const { data: usuarioEncontrado } = await supabase.rpc('login_usuario', {
-      p_username: usuario,
-      p_password: password,
+    const { data: usuarioEncontrado, error } = await supabase.functions.invoke('rapid-service', {
+      body: {
+        p_username: usuario,
+        p_password: password,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
+
+    console.log(usuarioEncontrado, error);
 
     if (usuarioEncontrado.Error) {
       return {
