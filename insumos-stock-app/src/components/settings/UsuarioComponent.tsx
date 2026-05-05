@@ -3,16 +3,16 @@ import { useAllUsuarios } from '@/src/hooks/usuarios/useUsuarios';
 import { Usuario } from '@/src/interface/Usuario';
 import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
-import Button from '../ui/Button';
 import Loading from '../ui/Loading';
 import ToastConfirmacion from '../ui/ToastConfirmacion';
+import UsuarioItem from './UsuarioItem';
 
 export default function UsuarioComponent() {
   const { data, isLoading } = useAllUsuarios();
-  const { startUpdateLogin, startCreateUser } = useMutateUsuario();
+  const { startUpdateLogin, startCreateUser, startUpdateUser } = useMutateUsuario();
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
 
   const [nombre, setNombre] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -22,7 +22,20 @@ export default function UsuarioComponent() {
   const [idUsuario, setIdUsuario] = useState<string>('');
   const [activo, setActivo] = useState<boolean>(false);
 
+  const inputRef = useRef<TextInput>(null);
+
   const isDark = useColorScheme() === 'dark';
+
+  useEffect(() => {
+    if (usuario) {
+      setNombre(usuario.usuario);
+      setRol(usuario.rol);
+    } else {
+      setNombre('');
+      setPassword('');
+      setRol('');
+    }
+  }, [usuario]);
 
   if (!data || isLoading) return <Loading text="Cargando datos..." />;
 
@@ -93,70 +106,67 @@ export default function UsuarioComponent() {
     }
   };
 
-  const renderHeader = () => (
-    <View className="mb-6 pb-10">
-      <View className="mb-6">
-        <Text className="text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2 ml-1">Agregar Usuario</Text>
-        <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 h-14 mb-4">
-          <Ionicons name="person" size={18} color={isDark ? '#525252' : '#A3A3A3'} style={{ marginRight: 12 }} />
-          <TextInput
-            value={nombre}
-            onChangeText={setNombre}
-            placeholder="Nombre de usuario"
-            placeholderTextColor={isDark ? '#737373' : '#9CA3AF'}
-            className="flex-1 text-neutral-900 dark:text-neutral-100 font-medium"
-          />
-        </View>
-        <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 h-14 mb-4">
-          <Ionicons name="lock-closed" size={18} color={isDark ? '#525252' : '#A3A3A3'} style={{ marginRight: 12 }} />
-          <TextInput
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Contraseña"
-            placeholderTextColor={isDark ? '#737373' : '#9CA3AF'}
-            className="flex-1 text-neutral-900 dark:text-neutral-100 font-medium"
-          />
-        </View>
-        <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl  h-14 mb-4">
-          {/* <Ionicons name="lock-closed" size={18} color={isDark ? '#525252' : '#A3A3A3'} style={{ marginRight: 12 }} /> */}
-          <Dropdown
-            {...dropdownStyles}
-            data={[
-              { label: 'Empleado', value: 'EMPLEADO' },
-              { label: 'Admin', value: 'ADMIN' },
-            ]}
-            value={rol}
-            onChange={(item) => setRol(item.value)}
-            placeholder="Rol"
-            valueField="value"
-            labelField="label"
-          />
-        </View>
-        <Button variant="primary" icon="add-circle" onPress={handleCreateUser} title={startCreateUser.isPending ? 'Creando...' : 'Crear Usuario'} className="py-3.5 rounded-2xl" />
+  const handleUpdateUser = async () => {
+    if (!usuario?.id_usuario) return;
 
-        <View className="mt-8 mb-2 flex-row items-center justify-between">
-          <Text className="text-sm font-bold text-neutral-800 dark:text-neutral-200 ml-1">Usuarios Activos</Text>
-          <View className="bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full">
-            <Text className="text-xs font-black text-neutral-500 dark:text-neutral-400">{data.length}</Text>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
+    if (!password || !rol) {
+      mensaje('error', 'Debe ingresar una contraseña y seleccionar un rol');
+      return;
+    }
 
+    if (password.length < 6) {
+      mensaje('error', 'La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    const res = await startUpdateUser.mutateAsync({ id_usuario: usuario?.id_usuario, usuario: nombre, password, rol });
+    if (res) {
+      mensaje('success', 'Usuario actualizado correctamente');
+      setUsuario(null);
+      setPassword('');
+      setNombre('');
+      setRol('EMPLEADO');
+    } else {
+      mensaje('error', 'Error al actualizar el usuario');
+    }
+  };
   return (
     <>
       <FlatList
         data={data}
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={renderHeader()}
+        ListHeaderComponent={
+          <UsuarioItem
+            nombre={nombre}
+            inputRef={inputRef}
+            password={password}
+            rol={rol}
+            setNombre={setNombre}
+            setPassword={setPassword}
+            setRol={setRol}
+            isDark={isDark}
+            dropdownStyles={dropdownStyles}
+            usuario={usuario}
+            startUpdateUser={startUpdateUser}
+            startCreateUser={startCreateUser}
+            handleUpdateUser={handleUpdateUser}
+            handleCreateUser={handleCreateUser}
+            data={data}
+            setUsuario={setUsuario}
+          />
+        }
         contentContainerStyle={{ paddingBottom: 20 }}
         keyExtractor={(item) => item.id_usuario}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => handleActive(item)}
+            onPress={() => {
+              setUsuario(item);
+              setTimeout(() => {
+                inputRef.current?.focus();
+              }, 100);
+            }}
+            onLongPress={() => handleActive(item)}
             className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800/50 rounded-2xl p-4 mb-3"
           >
             <View className="w-10 h-10 bg-white dark:bg-neutral-800 rounded-full items-center justify-center mr-3 shadow-sm shadow-black/5">

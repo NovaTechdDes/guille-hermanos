@@ -13,7 +13,7 @@ export const getUsuario = async (usuario: string, password: string): Promise<Usu
 
 export const postLogin = async (usuario: string, password: string) => {
   try {
-    const { data: usuarioEncontrado, error } = await supabase.functions.invoke('rapid-service', {
+    const { data: usuarioEncontrado } = await supabase.functions.invoke('rapid-service', {
       body: {
         p_username: usuario,
         p_password: password,
@@ -23,8 +23,6 @@ export const postLogin = async (usuario: string, password: string) => {
       },
     });
 
-    console.log(usuarioEncontrado, error);
-
     if (usuarioEncontrado.Error) {
       return {
         ok: false,
@@ -32,10 +30,20 @@ export const postLogin = async (usuario: string, password: string) => {
       };
     }
 
+    const user = JSON.parse(usuarioEncontrado);
+
+    if (user.session.access_token) {
+      await supabase.auth.setSession({
+        access_token: user.session.access_token,
+        refresh_token: user.session.refresh_token,
+      });
+    }
+
     return {
       ok: true,
       message: 'Usuario logueado correctamente',
-      usuario: usuarioEncontrado,
+      usuario: user.usuario,
+      session: user.session,
     };
   } catch (error) {
     console.error(error);
@@ -87,6 +95,29 @@ export const createUser = async (nombre: string, password: string, rol: string):
       p_rol: rol,
     });
     if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export const updateUser = async (id_usuario: string, usuario: string, password: string, rol: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase.functions.invoke('actualizar-usuario', {
+      body: {
+        p_id_usuario: id_usuario,
+        p_username: usuario,
+        p_password: password,
+        p_rol: rol,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (error) throw error;
+
     return true;
   } catch (error) {
     console.error(error);

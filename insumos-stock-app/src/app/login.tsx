@@ -18,7 +18,7 @@ export default function LoginScreen() {
   const version = Constants.expoConfig?.version;
 
   const { startPostLogin } = useMutateUsuario();
-  const { setUsuario: setUsuarioStore } = useUsuarioStore();
+  const { setUsuario: setUsuarioStore, setSession } = useUsuarioStore();
 
   const [recordarme, setRecordarme] = useState<boolean>(false);
   const [usuario, setUsuario] = useState<string>('');
@@ -36,6 +36,7 @@ export default function LoginScreen() {
     if (response.ok) {
       mensaje('success', '¡Usuario logueado correctamente!');
       setUsuarioStore(response.usuario);
+      setSession(response.session);
 
       if (response.usuario.rol === 'EMPLEADO') {
         router.replace('/create');

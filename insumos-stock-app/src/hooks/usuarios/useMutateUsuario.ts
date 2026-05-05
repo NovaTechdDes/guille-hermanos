@@ -1,4 +1,4 @@
-import { createUser, postLogin, toggleActivo } from '@/src/actions';
+import { createUser, postLogin, toggleActivo, updateUser } from '@/src/actions';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useMutateUsuario = () => {
@@ -20,6 +20,16 @@ export const useMutateUsuario = () => {
     },
   });
 
+  const startUpdateUser = useMutation({
+    mutationFn: async ({ id_usuario, usuario, password, rol }: { id_usuario: string; usuario: string; password: string; rol: string }) => {
+      return await updateUser(id_usuario, usuario, password, rol);
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['usuarios'] });
+      queryClient.invalidateQueries({ queryKey: ['allUsuarios'] });
+    },
+  });
+
   const startCreateUser = useMutation({
     mutationFn: async ({ nombre, password, rol }: { nombre: string; password: string; rol: string }) => {
       return await createUser(nombre, password, rol);
@@ -34,5 +44,6 @@ export const useMutateUsuario = () => {
     startPostLogin,
     startUpdateLogin,
     startCreateUser,
+    startUpdateUser,
   };
 };

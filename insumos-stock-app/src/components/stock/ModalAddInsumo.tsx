@@ -21,7 +21,7 @@ const UNIDADES = [
 export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoProps) {
   const colorScheme = useColorScheme();
   const { startPostInsumo, startPutInsumo } = useMutateInsumo();
-  const { insumoSeleccionado, closeModal } = useStockStore();
+  const { insumoSeleccionado, closeModal, setInsumoSeleccionado } = useStockStore();
 
   const [nombre, setNombre] = useState(insumoSeleccionado ? insumoSeleccionado.nombre : '');
   const [unidad, setUnidad] = useState<string | null>(insumoSeleccionado ? insumoSeleccionado.unidad : '');
@@ -53,6 +53,7 @@ export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoPro
         setNombre('');
         setUnidad(null);
         setError(false);
+        setInsumoSeleccionado(null);
         onClose();
         return;
       }
