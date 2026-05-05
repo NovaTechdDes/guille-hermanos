@@ -34,9 +34,9 @@ export default function StockScreen() {
   return (
     <SafeAreaView className="flex-1 px-4 bg-neutral-50 dark:bg-neutral-950">
       {/* Header Section */}
-      <View className="mb-8">
-        <Text className="text-4xl font-black text-neutral-800 dark:text-white tracking-tight">Stock</Text>
-        <Text className="text-neutral-500 dark:text-neutral-400 font-medium mt-1">Control de insumos agroquímicos</Text>
+      <View className="mb-8 mt-4 px-2">
+        <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Stock de Insumos</Text>
+        <Text className="text-sm text-neutral-500 dark:text-neutral-400 font-medium mt-1">Control de insumos agroquímicos y existencias.</Text>
       </View>
 
       {/* Filters Section */}

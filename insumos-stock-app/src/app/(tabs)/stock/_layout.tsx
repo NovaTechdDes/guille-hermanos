@@ -18,16 +18,19 @@ export default function StockLayout() {
         headerStyle: {
           backgroundColor: isDark ? colors.dark.surface : colors.light.surface,
         },
+        headerTintColor: isDark ? colors.dark.text : colors.light.text,
+        headerTitleStyle: {
+          fontWeight: '900',
+          fontSize: 18,
+          color: isDark ? colors.dark.text : colors.light.text,
+        },
+        headerShadowVisible: false,
         headerRight: () =>
           isAdmin ? (
             <TouchableOpacity onPress={() => router.push('/settings')} style={{ marginRight: 15 }}>
               <Ionicons name="settings-outline" size={24} color={colors.primary} />
             </TouchableOpacity>
           ) : null,
-        headerTintColor: isDark ? colors.dark.text : colors.light.text,
-        headerTitleStyle: {
-          color: isDark ? colors.dark.text : colors.light.text,
-        },
       }}
     >
       <Stack.Screen name="index" options={{ title: 'Inventario' }} />

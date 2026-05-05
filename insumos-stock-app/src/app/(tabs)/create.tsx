@@ -123,6 +123,8 @@ export default function Create() {
       {
         backgroundColor: isDark ? '#171717' : 'white',
         borderColor: isDark ? '#404040' : '#E5E7EB',
+        elevation: 20,
+        zIndex: 999,
       },
     ],
     itemTextStyle: { color: isDark ? '#D4D4D4' : '#171717' },
@@ -168,6 +170,7 @@ export default function Create() {
                 </Pressable>
               </View>
             </View>
+
             {/* Fecha */}
             <Pressable
               onPress={() => setShow(true)}
@@ -193,7 +196,7 @@ export default function Create() {
 
             {/* Proveedor / Insumo Grid */}
             {type === 'Ingreso' && (
-              <View>
+              <View style={{ zIndex: 1001 }}>
                 <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Proveedor</Text>
                 <Dropdown
                   data={provedores as any}
@@ -212,7 +215,7 @@ export default function Create() {
             )}
 
             {/* Insumo */}
-            <View>
+            <View style={{ zIndex: 1000 }}>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Insumo</Text>
               <Dropdown
                 data={insumos as any}
@@ -251,7 +254,7 @@ export default function Create() {
             </View>
 
             {/* Bodega */}
-            <View>
+            <View style={{ zIndex: 999 }}>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Bodega Origen</Text>
               <Dropdown
                 data={bodegas as any}
@@ -270,7 +273,7 @@ export default function Create() {
 
             {/* Destino (Solo Egreso) */}
             {type === 'Egreso' && (
-              <View className="bg-primary/5 dark:bg-primary/10 p-4 rounded-3xl border border-primary/10">
+              <View style={{ zIndex: 998 }} className="bg-primary/5 dark:bg-primary/10 p-4 rounded-3xl border border-primary/10">
                 <Text className="text-[10px] font-black text-primary uppercase tracking-[2px] mb-2 ml-1">Destino del Egreso</Text>
                 <Dropdown
                   data={destinos as any}

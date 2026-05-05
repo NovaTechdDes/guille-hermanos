@@ -108,8 +108,11 @@ export default function MovimientoScreen() {
         ListHeaderComponent={
           <>
             {/* Header Filters */}
-            <View className="px-6 pt-4 pb-8 bg-white dark:bg-neutral-900 rounded-b-[40px] shadow-xl shadow-black/5 border-b border-neutral-100 dark:border-neutral-800">
-              <Text className="text-3xl font-black text-neutral-800 dark:text-white tracking-tight mb-6">Historial</Text>
+            <View className="px-6 pt-6 pb-8 bg-white dark:bg-neutral-900 rounded-b-[40px] shadow-xl shadow-black/5 border-b border-neutral-100 dark:border-neutral-800">
+              <View className="mb-6">
+                <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Historial de Movimientos</Text>
+                <Text className="text-sm text-neutral-500 dark:text-neutral-400 font-medium mt-1">Consulta los ingresos y egresos registrados.</Text>
+              </View>
 
               {/* Date Selectors */}
               <View className="flex-row gap-3 mb-6">

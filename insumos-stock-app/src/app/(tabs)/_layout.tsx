@@ -22,8 +22,11 @@ export default function TabsLayout() {
         },
         headerTintColor: isDark ? colors.dark.text : colors.light.text,
         headerTitleStyle: {
-          fontWeight: '800',
+          fontWeight: '900',
+          fontSize: 18,
+          color: isDark ? colors.dark.text : colors.light.text,
         },
+        headerShadowVisible: false,
         tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cube' : 'cube-outline'} size={24} color={color} />,
         headerRight: () =>
           isAdmin ? (
