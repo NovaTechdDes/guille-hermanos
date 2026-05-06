@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function MovimientoScreen() {
   const { isDark } = useTheme();
@@ -97,7 +96,7 @@ export default function MovimientoScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-neutral-50 dark:bg-neutral-950">
+    <View className="flex-1 bg-neutral-50 dark:bg-neutral-950">
       <FlatList
         data={filteredMovimientos}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -246,7 +245,7 @@ export default function MovimientoScreen() {
           </View>
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
 

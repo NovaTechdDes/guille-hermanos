@@ -6,7 +6,6 @@ import { useStock } from '@/src/hooks/data/useData';
 import { useStockStore } from '@/src/store/useStockStore';
 import React, { useMemo, useState } from 'react';
 import { FlatList, RefreshControl, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function StockScreen() {
   const { data: stock, isLoading, refetch } = useStock();
@@ -32,7 +31,7 @@ export default function StockScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 px-4 bg-neutral-50 dark:bg-neutral-950">
+    <View className="flex-1 px-4 bg-neutral-50 dark:bg-neutral-950">
       {/* Header Section */}
       <View className="mb-8 mt-4 px-2">
         <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Stock de Insumos</Text>
@@ -55,7 +54,7 @@ export default function StockScreen() {
 
       {/* Modal Add Inusmo */}
       <ModalAddInsumo isVisible={modalOpen} onClose={closeModal} />
-    </SafeAreaView>
+    </View>
   );
 }
 

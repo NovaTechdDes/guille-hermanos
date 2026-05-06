@@ -39,7 +39,7 @@ export default function Create() {
 
   useEffect(() => {
     typeX.value = withSpring(type === 'Ingreso' ? 0 : 1, { damping: 15 });
-  }, [type]);
+  }, [type, typeX]);
 
   const animatedTypeStyle = useAnimatedStyle(() => {
     return {
@@ -123,8 +123,8 @@ export default function Create() {
       {
         backgroundColor: isDark ? '#171717' : 'white',
         borderColor: isDark ? '#404040' : '#E5E7EB',
-        elevation: 20,
-        zIndex: 999,
+        elevation: 0,
+        paddingBottom: 10,
       },
     ],
     itemTextStyle: { color: isDark ? '#D4D4D4' : '#171717' },
@@ -257,6 +257,7 @@ export default function Create() {
             <View style={{ zIndex: 999 }}>
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Bodega Origen</Text>
               <Dropdown
+                maxHeight={300}
                 data={bodegas as any}
                 search
                 {...dropdownStyles}
@@ -265,6 +266,11 @@ export default function Create() {
                 labelField="nombre"
                 placeholder="Seleccione una bodega"
                 value={bodega}
+                flatListProps={{
+                  contentContainerStyle: {
+                    paddingBottom: 20,
+                  },
+                }}
                 onChange={(item) => setBodega(item)}
                 renderRightIcon={() => <Ionicons name="chevron-down" size={18} color="#A3A3A3" />}
               />

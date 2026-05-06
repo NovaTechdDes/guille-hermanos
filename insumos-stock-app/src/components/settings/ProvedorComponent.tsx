@@ -7,8 +7,14 @@ import { FlatList, Pressable, RefreshControl, Text, TextInput, View, useColorSch
 import Button from '../ui/Button';
 import Loading from '../ui/Loading';
 import ToastNombre from '../ui/ToastNombre';
+import HeaderSettings from './HeaderSettings';
 
-export default function ProvedorComponet() {
+interface Props {
+  selected: string;
+  setSelected: (value: string) => void;
+}
+
+export default function ProvedorComponet({ selected, setSelected }: Props) {
   const { data, isLoading, refetch } = useData();
   const { startPostProvedor, startPutProvedor } = useMutateProvedor();
 
@@ -61,6 +67,7 @@ export default function ProvedorComponet() {
 
   const renderHeader = () => (
     <View className="mb-6">
+      <HeaderSettings selected={selected} setSelected={setSelected} />
       <Text className="text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2 ml-1">Agregar Proveedor</Text>
       <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 h-14 mb-4">
         <Ionicons name="cube" size={18} color={isDark ? '#525252' : '#A3A3A3'} style={{ marginRight: 12 }} />
