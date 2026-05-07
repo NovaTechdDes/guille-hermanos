@@ -11,44 +11,36 @@ export const getUsuario = async (usuario: string, password: string): Promise<Usu
   return usuarioData;
 };
 
-export const postLogin = async (usuario: string, password: string) => {
+export const postLogin = async (username: string, password: string) => {
   try {
-    const { data: usuarioEncontrado } = await supabase.functions.invoke('rapid-service', {
-      body: {
-        p_username: usuario,
-        p_password: password,
-      },
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const { data: usuario } = await supabase.from('usuarios').select('*').eq('nombre', username.toLowerCase().trim()).single();
 
-    if (usuarioEncontrado.Error) {
-      return {
-        ok: false,
-        message: 'Usuario o contraseña incorrectos',
-      };
+    if (!usuario) {
+      throw new Error('Usuario no existe');
     }
 
-    const user = JSON.parse(usuarioEncontrado);
+    const email = `${username.trim()}@app.local`;
 
-    if (user.session.access_token) {
-      await supabase.auth.setSession({
-        access_token: user.session.access_token,
-        refresh_token: user.session.refresh_token,
-      });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data.session || !usuario.activo) {
+      throw new Error('Usuario no activo');
     }
 
     return {
-      ok: true,
+      ok: true as const,
       message: 'Usuario logueado correctamente',
-      usuario: user.usuario,
-      session: user.session,
+      usuario: usuario,
+      session: data.session,
     };
   } catch (error) {
     console.error(error);
     return {
-      ok: false,
+      ok: false as const,
       message: 'Error al loguearse',
     };
   }
@@ -89,10 +81,15 @@ export const toggleActivo = async (id_usuario: string, activo: boolean): Promise
 
 export const createUser = async (nombre: string, password: string, rol: string): Promise<boolean> => {
   try {
-    const { error } = await supabase.rpc('crear_usuario', {
-      p_username: nombre,
-      p_password: password,
-      p_rol: rol,
+    const { error } = await supabase.functions.invoke('create-usuario', {
+      body: {
+        p_username: nombre,
+        p_password: password,
+        p_rol: rol,
+      },
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     if (error) throw error;
     return true;

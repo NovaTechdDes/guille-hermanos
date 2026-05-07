@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Button from '../components/ui/Button';
 import Checkbox from '../components/ui/Checkbox';
@@ -24,6 +24,8 @@ export default function LoginScreen() {
   const [usuario, setUsuario] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+
   const handleLogin = async () => {
     if (recordarme) {
       await AsyncStorage.setItem('usuario', usuario);
@@ -36,7 +38,7 @@ export default function LoginScreen() {
     if (response.ok) {
       mensaje('success', '¡Usuario logueado correctamente!');
       setUsuarioStore(response.usuario);
-      setSession(response.session);
+      setSession(response?.session || null);
 
       if (response.usuario.rol === 'EMPLEADO') {
         router.replace('/create');
@@ -96,14 +98,19 @@ export default function LoginScreen() {
             <Ionicons name="lock-closed" size={24} color={isDark ? 'white' : 'black'} />
             <Text className="text-lg font-bold text-neutral-600 dark:text-white">Contraseña</Text>
           </View>
-          <TextInput
-            className="w-full h-12 px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-lg text-neutral-800 dark:text-white"
-            placeholder="Contraseña"
-            placeholderTextColor="#9CA3AF"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View>
+            <TextInput
+              className="w-full h-12 px-4 py-2 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 rounded-lg text-neutral-800 dark:text-white"
+              placeholder="Contraseña"
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity className="absolute right-4 top-3" onPress={() => setShowPassword(!showPassword)}>
+              <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color={isDark ? 'white' : 'black'} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Checkbox label="Recordarme" checked={recordarme} onChange={setRecordarme} className="self-center" />

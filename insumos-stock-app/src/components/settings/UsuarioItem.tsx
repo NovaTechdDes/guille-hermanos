@@ -1,7 +1,7 @@
 import { Usuario } from '@/src/interface/Usuario';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import Button from '../ui/Button';
 
@@ -42,6 +42,7 @@ export default function UsuarioItem({
   data,
   setUsuario,
 }: Props) {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   return (
     <View className="mb-2 pb-2">
       <View className="mb-6">
@@ -60,16 +61,20 @@ export default function UsuarioItem({
           />
         </View>
 
-        <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 h-14 mb-4">
-          <Ionicons name="lock-closed" size={18} color={isDark ? '#525252' : '#A3A3A3'} style={{ marginRight: 12 }} />
-          <TextInput
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Contraseña"
-            placeholderTextColor={isDark ? '#737373' : '#9CA3AF'}
-            className="flex-1 text-neutral-900 dark:text-neutral-100 font-medium"
-          />
+        <View className="gap-5">
+          <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl px-4 h-14 mb-4">
+            <TextInput
+              className="w-full h-12 px-4 py-2 bg-transparent text-neutral-800 dark:text-neutral-100 font-medium"
+              placeholder="Contraseña"
+              placeholderTextColor="#9CA3AF"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity className="absolute right-4 top-3" onPress={() => setShowPassword(!showPassword)}>
+              <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color={isDark ? 'white' : 'black'} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl  h-14 mb-4">

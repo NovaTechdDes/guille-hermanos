@@ -21,7 +21,7 @@ const UNIDADES = [
 export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoProps) {
   const colorScheme = useColorScheme();
   const { startPostInsumo, startPutInsumo } = useMutateInsumo();
-  const { insumoSeleccionado, closeModal, setInsumoSeleccionado } = useStockStore();
+  const { insumoSeleccionado, setInsumoSeleccionado } = useStockStore();
 
   const [nombre, setNombre] = useState(insumoSeleccionado ? insumoSeleccionado.nombre : '');
   const [unidad, setUnidad] = useState<string | null>(insumoSeleccionado ? insumoSeleccionado.unidad : '');
@@ -68,6 +68,7 @@ export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoPro
       setNombre('');
       setUnidad(null);
       setError(false);
+      setInsumoSeleccionado(null);
       onClose();
     } else {
       mensaje('error', 'Error al crear el insumo', '');
@@ -75,13 +76,13 @@ export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoPro
   };
 
   const handleClose = () => {
-    closeModal();
     setError(false);
+    setInsumoSeleccionado(null);
     onClose();
   };
 
   return (
-    <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={onClose}>
+    <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={handleClose}>
       <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}>
         <Pressable style={{ flex: 1 }} className="bg-black/60" onPress={handleClose}>
           <ScrollView
@@ -163,7 +164,7 @@ export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoPro
 
                   {/* Botones de Acción */}
                   <View className="flex-row gap-3 mt-4">
-                    <Pressable onPress={onClose} className="flex-1 h-14 bg-neutral-100 dark:bg-neutral-800 rounded-2xl items-center justify-center">
+                    <Pressable onPress={handleClose} className="flex-1 h-14 bg-neutral-100 dark:bg-neutral-800 rounded-2xl items-center justify-center">
                       <Text className="text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-tight">Cancelar</Text>
                     </Pressable>
 
