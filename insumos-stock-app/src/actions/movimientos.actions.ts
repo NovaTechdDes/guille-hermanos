@@ -5,10 +5,9 @@ export const getMovimientosForDate = async (desde: string, hasta: string): Promi
   try {
     const { data, error } = await supabase
       .from('mov_insumo')
-      .select('*, insumo(nombre, unidad), bodega(nombre), destino(nombre), provedor(nombre)')
+      .select('*, insumo(nombre, unidad), bodega(nombre), destino(nombre), provedor(nombre), usuarios!fk_mov_usuario(nombre)')
       .gte('fecha', `${desde}T00:00:00`)
       .lte('fecha', `${hasta}T23:59:59.999`);
-
     if (error) throw error;
     return data;
   } catch (error) {

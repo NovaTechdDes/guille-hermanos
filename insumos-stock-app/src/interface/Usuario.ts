@@ -1,5 +1,5 @@
 export interface Usuario {
-  id_usuario: string;
+  id_usuario: number;
   usuario: string;
   password?: string;
   rol: 'ADMIN' | 'EMPLEADO' | 'SUPERADMIN';

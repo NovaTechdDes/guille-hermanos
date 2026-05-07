@@ -25,7 +25,7 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
     if (!movimiento.insumo || !movimiento.bodega) return;
 
     const antiMovmineto: Mov_insumo = {
-      usuario_id: usuario?.id_usuario || '0',
+      usuario_id: usuario?.id_usuario || 0,
       insumo_id: movimiento.insumo.id,
       bodega_id: movimiento.bodega.id,
       destino_id: movimiento.destino?.id,
@@ -82,12 +82,12 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
             <Text className="text-white text-[10px] font-bold">{isIngreso ? 'INGRESO' : 'EGRESO'}</Text>
           </View>
 
-          <Text className="mt-1 text-neutral-400 dark:text-neutral-500 text-md">Vendedor: {usuario?.usuario}</Text>
+          {!eliminar && <Text className="mt-1 text-neutral-400 dark:text-neutral-500 text-md">Vendedor: {movimiento.usuarios?.nombre}</Text>}
         </View>
       </View>
 
       <View className="px-4 pb-2">
-        <Text className="text-neutral-900 dark:text-neutral-100 font-bold text-base leading-tight">Observacion: {movimiento.observacion || 'N/A'}</Text>
+        <Text className="text-neutral-900 dark:text-neutral-100 font-bold text-sm leading-tight">Observacion: {movimiento.observacion || 'N/A'}</Text>
       </View>
 
       {eliminar && (

@@ -18,7 +18,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 export default function Create() {
   const colorScheme = useColorScheme();
   const { usuario } = useUsuarioStore();
-  const { data, isLoading, refetch, isRefetching } = useData(usuario?.id_usuario || '0');
+  const { data, isLoading, refetch, isRefetching } = useData(usuario?.id_usuario || 0);
   const { startPostMovimiento } = useMutateMovimiento();
 
   const isDark = colorScheme === 'dark';
@@ -89,7 +89,7 @@ export default function Create() {
       bodega_id: bodega?.id_bodega,
       destino_id: destino?.id_destino,
       observacion: observacion,
-      usuario_id: usuario?.id_usuario || '',
+      usuario_id: usuario?.id_usuario || 0,
     };
 
     const res = await startPostMovimiento.mutateAsync(movimiento);
