@@ -1,17 +1,17 @@
 import ListaMovimientosVendedor from '@/src/components/create/ListaMovimientosVendedor';
 import Loading from '@/src/components/ui/Loading';
+import SelectModal from '@/src/components/ui/SelectModal';
 import { useData } from '@/src/hooks/data/useData';
 import { useMutateMovimiento } from '@/src/hooks/movimientos/useMutateMovimiento';
 import { Mov_insumo } from '@/src/interface/Mov_insumo';
 import { useUsuarioStore } from '@/src/store/useUsuarioStore';
-import { colors } from '@/src/theme/colors';
 import { mensaje } from '@/src/utils/mensaje';
+
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View, useColorScheme } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import { Pressable, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
@@ -37,6 +37,23 @@ export default function Create() {
   const [type, setType] = useState<'Ingreso' | 'Egreso'>('Ingreso');
   const typeX = useSharedValue(0);
 
+  const [visibleProvedor, setVisibleProvedor] = useState<boolean>(false);
+  const [visibleInsumo, setVisibleInsumo] = useState<boolean>(false);
+  const [visibleBodega, setVisibleBodega] = useState<boolean>(false);
+  const [visibleDestino, setVisibleDestino] = useState<boolean>(false);
+
+  const [provedor, setProvedor] = useState<any>(null);
+  const [insumo, setInsumo] = useState<any>(null);
+  const [cantidad, setCantidad] = useState('');
+  const [fecha, setFecha] = useState<Date>(new Date());
+  const [destinoFinal, setDestinoFinal] = useState<boolean>(true);
+  const [bodega, setBodega] = useState<any>(null);
+
+  const [destino, setDestino] = useState<any>(null);
+  const [bodegaFinal, setBodegaFinal] = useState<any>(null);
+
+  const [observacion, setObservacion] = useState('');
+
   useEffect(() => {
     typeX.value = withSpring(type === 'Ingreso' ? 0 : 1, { damping: 15 });
   }, [type, typeX]);
@@ -46,15 +63,6 @@ export default function Create() {
       left: `${typeX.value * 50}%`,
     };
   });
-
-  const [provedor, setProvedor] = useState<any>(null);
-  const [insumo, setInsumo] = useState<any>(null);
-  const [cantidad, setCantidad] = useState('');
-  const [fecha, setFecha] = useState<Date>(new Date());
-
-  const [bodega, setBodega] = useState<any>(null);
-  const [destino, setDestino] = useState<any>(null);
-  const [observacion, setObservacion] = useState('');
 
   const limpiarDatos = () => {
     setType('Ingreso');
@@ -69,17 +77,26 @@ export default function Create() {
   };
 
   const handleAddMovimiento = async () => {
+    setError(false);
     if (type === 'Ingreso') {
       if (!provedor || !insumo || !cantidad || !fecha || !bodega) {
         setError(true);
         return;
       }
     } else {
-      if (!destino || !cantidad || !fecha || !bodega) {
-        setError(true);
-        return;
+      if (destinoFinal) {
+        if (!destino || !cantidad || !fecha || !bodega) {
+          setError(true);
+          return;
+        }
+      } else {
+        if (!cantidad || !fecha || !bodega || !bodegaFinal) {
+          setError(true);
+          return;
+        }
       }
     }
+
     const movimiento: Mov_insumo = {
       tipo: type.toUpperCase() as 'INGRESO' | 'EGRESO',
       provedor_id: provedor?.id_provedor,
@@ -92,6 +109,30 @@ export default function Create() {
       usuario_id: usuario?.id_usuario || 0,
     };
 
+    console.log(destinoFinal);
+
+    if (!destinoFinal) {
+      const movimientoIngreso: Mov_insumo = {
+        tipo: 'INGRESO',
+        provedor_id: provedor?.id_provedor,
+        insumo_id: insumo?.id_insumo,
+        cantidad: Number(cantidad),
+        fecha: fecha.toISOString().split('T')[0],
+        bodega_id: bodega?.id_bodega,
+        destino_id: destino?.id_destino,
+        observacion: observacion,
+        usuario_id: usuario?.id_usuario || 0,
+      };
+
+      const res = await startPostMovimiento.mutateAsync(movimientoIngreso);
+      if (res) {
+        mensaje('success', 'Movimiento agregado correctamente');
+        limpiarDatos();
+      } else {
+        mensaje('error', 'Error al agregar movimiento');
+      }
+    }
+
     const res = await startPostMovimiento.mutateAsync(movimiento);
     if (res) {
       mensaje('success', 'Movimiento agregado correctamente');
@@ -99,36 +140,6 @@ export default function Create() {
     } else {
       mensaje('error', 'Error al agregar movimiento');
     }
-  };
-
-  const dropdownStyles = {
-    style: [
-      styles.dropdown,
-      {
-        backgroundColor: isDark ? '#262626' : '#F9FAFB',
-        borderColor: isDark ? '#404040' : '#E5E7EB',
-      },
-    ],
-    placeholderStyle: [styles.placeholderStyle, { color: isDark ? '#737373' : '#A3A3A3' }],
-    selectedTextStyle: [styles.selectedTextStyle, { color: isDark ? '#F5F5F5' : '#171717' }],
-    inputSearchStyle: [
-      styles.inputSearchStyle,
-      {
-        color: isDark ? 'white' : 'black',
-        backgroundColor: isDark ? '#171717' : 'white',
-      },
-    ],
-    containerStyle: [
-      styles.containerStyle,
-      {
-        backgroundColor: isDark ? '#171717' : 'white',
-        borderColor: isDark ? '#404040' : '#E5E7EB',
-        elevation: 0,
-        paddingBottom: 10,
-      },
-    ],
-    itemTextStyle: { color: isDark ? '#D4D4D4' : '#171717' },
-    activeColor: isDark ? '#262626' : '#F5F5F5',
   };
 
   if (isLoading) {
@@ -196,41 +207,19 @@ export default function Create() {
 
             {/* Proveedor / Insumo Grid */}
             {type === 'Ingreso' && (
-              <View style={{ zIndex: 1001 }}>
+              <TouchableOpacity onPress={() => setVisibleProvedor(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
                 <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Proveedor</Text>
-                <Dropdown
-                  data={provedores as any}
-                  search
-                  {...dropdownStyles}
-                  searchPlaceholder="Buscar Provedor..."
-                  valueField="id_provedor"
-                  labelField="nombre"
-                  placeholder="Seleccione un proveedor"
-                  value={provedor}
-                  onChange={(item) => setProvedor(item)}
-                  renderRightIcon={() => <Ionicons name="chevron-down" size={18} color="#A3A3A3" />}
-                />
+                <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{provedor?.nombre ?? 'Seleccionar proveedor'}</Text>
                 {error && !provedor && <Text className="text-red-600 text-xs ml-1">Debe seleccionar un proveedor</Text>}
-              </View>
+              </TouchableOpacity>
             )}
 
             {/* Insumo */}
-            <View style={{ zIndex: 1000 }}>
+            <TouchableOpacity onPress={() => setVisibleInsumo(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Insumo</Text>
-              <Dropdown
-                data={insumos as any}
-                search
-                {...dropdownStyles}
-                searchPlaceholder="Buscar Insumo..."
-                valueField="id_insumo"
-                labelField="nombre"
-                placeholder="Seleccione un producto"
-                value={insumo}
-                onChange={(item) => setInsumo(item)}
-                renderRightIcon={() => <Ionicons name="chevron-down" size={18} color="#A3A3A3" />}
-              />
+              <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{insumo?.nombre ?? 'Seleccionar insumo'}</Text>
               {error && !insumo && <Text className="text-red-600 text-xs ml-1">Debe seleccionar un insumo</Text>}
-            </View>
+            </TouchableOpacity>
 
             {/* Cantidad */}
             <View>
@@ -254,48 +243,43 @@ export default function Create() {
             </View>
 
             {/* Bodega */}
-            <View style={{ zIndex: 999 }}>
+            <TouchableOpacity onPress={() => setVisibleBodega(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
               <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Bodega Origen</Text>
-              <Dropdown
-                maxHeight={300}
-                data={bodegas as any}
-                search
-                {...dropdownStyles}
-                searchPlaceholder="Buscar Bodega..."
-                valueField="id_bodega"
-                labelField="nombre"
-                placeholder="Seleccione una bodega"
-                value={bodega}
-                flatListProps={{
-                  contentContainerStyle: {
-                    paddingBottom: 20,
-                  },
-                }}
-                onChange={(item) => setBodega(item)}
-                renderRightIcon={() => <Ionicons name="chevron-down" size={18} color="#A3A3A3" />}
-              />
+              <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{bodega?.nombre ?? 'Seleccionar bodega'}</Text>
               {error && !bodega && <Text className="text-red-600 text-xs ml-1">Debe seleccionar una bodega</Text>}
-            </View>
+            </TouchableOpacity>
+
+            {type === 'Egreso' && (
+              <View>
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-3 ml-1">Tipo de Movimiento</Text>
+                <View className="bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl relative flex-row h-14 overflow-hidden">
+                  <Animated.View className="absolute top-1.5 bottom-1.5 w-[48.5%] bg-white dark:bg-neutral-700 rounded-xl shadow-sm" style={animatedTypeStyle} />
+                  <Pressable onPress={() => setDestinoFinal(false)} className="flex-1 items-center justify-center flex-row">
+                    <Ionicons name="arrow-up-circle" size={18} color={!destinoFinal ? '#10b981' : '#A3A3A3'} style={{ marginRight: 6 }} />
+                    <Text className={clsx('font-black text-xs uppercase tracking-widest', !destinoFinal ? 'text-green-600 dark:text-green-400' : 'text-neutral-500')}>Entre Bodegas</Text>
+                  </Pressable>
+                  <Pressable onPress={() => setDestinoFinal(true)} className="flex-1 items-center justify-center flex-row">
+                    <Ionicons name="arrow-down-circle" size={18} color={destinoFinal ? '#ef4444' : '#A3A3A3'} style={{ marginRight: 6 }} />
+                    <Text className={clsx('font-black text-xs uppercase tracking-widest', destinoFinal ? 'text-red-600 dark:text-red-400' : 'text-neutral-500')}>Destino Final</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
 
             {/* Destino (Solo Egreso) */}
-            {type === 'Egreso' && (
-              <View style={{ zIndex: 998 }} className="bg-primary/5 dark:bg-primary/10 p-4 rounded-3xl border border-primary/10">
-                <Text className="text-[10px] font-black text-primary uppercase tracking-[2px] mb-2 ml-1">Destino del Egreso</Text>
-                <Dropdown
-                  data={destinos as any}
-                  search
-                  {...dropdownStyles}
-                  style={[dropdownStyles.style, { backgroundColor: isDark ? '#171717' : 'white' }]}
-                  searchPlaceholder="Buscar Destino..."
-                  valueField="id_destino"
-                  labelField="nombre"
-                  placeholder="Seleccione Lote / Cliente"
-                  value={destino}
-                  onChange={(item) => setDestino(item)}
-                  renderRightIcon={() => <Ionicons name="chevron-down" size={18} color={colors.primary} />}
-                />
+            {destinoFinal && type === 'Egreso' && (
+              <TouchableOpacity onPress={() => setVisibleDestino(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Destino</Text>
+                <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{destino?.nombre ?? 'Seleccionar destino'}</Text>
                 {error && !destino && <Text className="text-red-600 text-xs ml-1">Debe seleccionar un destino</Text>}
-              </View>
+              </TouchableOpacity>
+            )}
+            {!destinoFinal && type === 'Egreso' && (
+              <TouchableOpacity onPress={() => setVisibleBodega(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Bodega Final</Text>
+                <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{bodegaFinal?.nombre ?? 'Seleccionar bodega'}</Text>
+                {error && !bodegaFinal && <Text className="text-red-600 text-xs ml-1">Debe seleccionar una bodega</Text>}
+              </TouchableOpacity>
             )}
 
             <View>
@@ -335,37 +319,12 @@ export default function Create() {
 
           {/* Lista de Movimientos */}
           {ultimos_movimientos && ultimos_movimientos.length > 0 && <ListaMovimientosVendedor isRefetching={isRefetching} refetch={refetch} movimientos={ultimos_movimientos} />}
+          <SelectModal data={provedores} visible={visibleProvedor} onSelect={(item) => setProvedor(item)} onClose={() => setVisibleProvedor(false)} />
+          <SelectModal data={insumos} visible={visibleInsumo} onSelect={(item) => setInsumo(item)} onClose={() => setVisibleInsumo(false)} />
+          <SelectModal data={bodegas} visible={visibleBodega} onSelect={(item) => setBodega(item)} onClose={() => setVisibleBodega(false)} />
+          <SelectModal data={destinos} visible={visibleDestino} onSelect={(item) => setDestino(item)} onClose={() => setVisibleDestino(false)} />
         </View>
       </KeyboardAwareScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  dropdown: {
-    height: 56,
-    width: '100%',
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-  },
-  placeholderStyle: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  selectedTextStyle: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  inputSearchStyle: {
-    height: 45,
-    fontSize: 14,
-    borderRadius: 12,
-  },
-  containerStyle: {
-    borderRadius: 20,
-    marginTop: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-  },
-});
