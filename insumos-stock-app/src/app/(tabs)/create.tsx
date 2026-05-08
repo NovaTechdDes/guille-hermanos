@@ -41,6 +41,7 @@ export default function Create() {
   const [visibleInsumo, setVisibleInsumo] = useState<boolean>(false);
   const [visibleBodega, setVisibleBodega] = useState<boolean>(false);
   const [visibleDestino, setVisibleDestino] = useState<boolean>(false);
+  const [visibleBodegaFinal, setVisibleBodegaFinal] = useState<boolean>(false);
 
   const [provedor, setProvedor] = useState<any>(null);
   const [insumo, setInsumo] = useState<any>(null);
@@ -116,8 +117,7 @@ export default function Create() {
         insumo_id: insumo?.id_insumo,
         cantidad: Number(cantidad),
         fecha: fecha.toISOString().split('T')[0],
-        bodega_id: bodega?.id_bodega,
-        destino_id: destino?.id_destino,
+        bodega_id: bodegaFinal?.id_bodega,
         observacion: observacion,
         usuario_id: usuario?.id_usuario || 0,
       };
@@ -305,7 +305,7 @@ export default function Create() {
             )}
             {!destinoFinal && type === 'Egreso' && (
               <TouchableOpacity
-                onPress={() => setVisibleBodega(true)}
+                onPress={() => setVisibleBodegaFinal(true)}
                 className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
               >
                 <View className="flex-1">
@@ -360,6 +360,7 @@ export default function Create() {
           <SelectModal title="Seleccionar Insumo" data={insumos} visible={visibleInsumo} onSelect={(item) => setInsumo(item)} onClose={() => setVisibleInsumo(false)} />
           <SelectModal title="Seleccionar Bodega" data={bodegas} visible={visibleBodega} onSelect={(item) => setBodega(item)} onClose={() => setVisibleBodega(false)} />
           <SelectModal title="Seleccionar Destino" data={destinos} visible={visibleDestino} onSelect={(item) => setDestino(item)} onClose={() => setVisibleDestino(false)} />
+          <SelectModal title="Seleccionar Bodega Destino" data={bodegas} visible={visibleBodegaFinal} onSelect={(item) => setBodegaFinal(item)} onClose={() => setVisibleBodegaFinal(false)} />
         </View>
       </KeyboardAwareScrollView>
     </View>
