@@ -205,20 +205,36 @@ export default function Create() {
               )}
             </Pressable>
 
-            {/* Proveedor / Insumo Grid */}
+            {/* Proveedor */}
             {type === 'Ingreso' && (
-              <TouchableOpacity onPress={() => setVisibleProvedor(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
-                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Proveedor</Text>
-                <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{provedor?.nombre ?? 'Seleccionar proveedor'}</Text>
-                {error && !provedor && <Text className="text-red-600 text-xs ml-1">Debe seleccionar un proveedor</Text>}
+              <TouchableOpacity
+                onPress={() => setVisibleProvedor(true)}
+                className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+              >
+                <View className="flex-1">
+                  <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Proveedor</Text>
+                  <Text className={clsx('font-bold text-base', provedor ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                    {provedor?.nombre ?? 'Seleccionar proveedor'}
+                  </Text>
+                </View>
+                <Ionicons name="business-outline" size={18} color={isDark ? 'white' : 'black'} />
+                {error && !provedor && <Text className="absolute -bottom-5 left-1 text-red-500 text-[10px] font-bold">Campo requerido</Text>}
               </TouchableOpacity>
             )}
 
             {/* Insumo */}
-            <TouchableOpacity onPress={() => setVisibleInsumo(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
-              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Insumo</Text>
-              <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{insumo?.nombre ?? 'Seleccionar insumo'}</Text>
-              {error && !insumo && <Text className="text-red-600 text-xs ml-1">Debe seleccionar un insumo</Text>}
+            <TouchableOpacity
+              onPress={() => setVisibleInsumo(true)}
+              className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+            >
+              <View className="flex-1">
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Insumo</Text>
+                <Text className={clsx('font-bold text-base', insumo ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                  {insumo?.nombre ?? 'Seleccionar insumo'}
+                </Text>
+              </View>
+              <Ionicons name="cube-outline" size={18} color={isDark ? 'white' : 'black'} />
+              {error && !insumo && <Text className="absolute -bottom-5 left-1 text-red-500 text-[10px] font-bold">Campo requerido</Text>}
             </TouchableOpacity>
 
             {/* Cantidad */}
@@ -243,17 +259,24 @@ export default function Create() {
             </View>
 
             {/* Bodega */}
-            <TouchableOpacity onPress={() => setVisibleBodega(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
-              <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Bodega Origen</Text>
-              <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{bodega?.nombre ?? 'Seleccionar bodega'}</Text>
-              {error && !bodega && <Text className="text-red-600 text-xs ml-1">Debe seleccionar una bodega</Text>}
+            <TouchableOpacity
+              onPress={() => setVisibleBodega(true)}
+              className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+            >
+              <View className="flex-1">
+                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Bodega Origen</Text>
+                <Text className={clsx('font-bold text-base', bodega ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                  {bodega?.nombre ?? 'Seleccionar bodega'}
+                </Text>
+              </View>
+              <Ionicons name="home-outline" size={18} color={isDark ? 'white' : 'black'} />
+              {error && !bodega && <Text className="absolute -bottom-5 left-1 text-red-500 text-[10px] font-bold">Campo requerido</Text>}
             </TouchableOpacity>
 
             {type === 'Egreso' && (
               <View>
                 <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-3 ml-1">Tipo de Movimiento</Text>
                 <View className="bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-2xl relative flex-row h-14 overflow-hidden">
-                  <Animated.View className="absolute top-1.5 bottom-1.5 w-[48.5%] bg-white dark:bg-neutral-700 rounded-xl shadow-sm" style={animatedTypeStyle} />
                   <Pressable onPress={() => setDestinoFinal(false)} className="flex-1 items-center justify-center flex-row">
                     <Ionicons name="arrow-up-circle" size={18} color={!destinoFinal ? '#10b981' : '#A3A3A3'} style={{ marginRight: 6 }} />
                     <Text className={clsx('font-black text-xs uppercase tracking-widest', !destinoFinal ? 'text-green-600 dark:text-green-400' : 'text-neutral-500')}>Entre Bodegas</Text>
@@ -268,17 +291,33 @@ export default function Create() {
 
             {/* Destino (Solo Egreso) */}
             {destinoFinal && type === 'Egreso' && (
-              <TouchableOpacity onPress={() => setVisibleDestino(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
-                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Destino</Text>
-                <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{destino?.nombre ?? 'Seleccionar destino'}</Text>
-                {error && !destino && <Text className="text-red-600 text-xs ml-1">Debe seleccionar un destino</Text>}
+              <TouchableOpacity
+                onPress={() => setVisibleDestino(true)}
+                className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+              >
+                <View className="flex-1">
+                  <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Destino</Text>
+                  <Text className={clsx('font-bold text-base', destino ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                    {destino?.nombre ?? 'Seleccionar destino'}
+                  </Text>
+                </View>
+                <Ionicons name="location-outline" size={18} color={isDark ? 'white' : 'black'} />
+                {error && !destino && <Text className="absolute -bottom-5 left-1 text-red-500 text-[10px] font-bold">Campo requerido</Text>}
               </TouchableOpacity>
             )}
             {!destinoFinal && type === 'Egreso' && (
-              <TouchableOpacity onPress={() => setVisibleBodega(true)} className="h-12 border py-1  border-slate-400 dark:border-slate-600 rounded-xl px-3 justify-center">
-                <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-[2px] mb-2 ml-1">Bodega Final</Text>
-                <Text className="text-neutral-800 dark:text-neutral-100 font-semibold">{bodegaFinal?.nombre ?? 'Seleccionar bodega'}</Text>
-                {error && !bodegaFinal && <Text className="text-red-600 text-xs ml-1">Debe seleccionar una bodega</Text>}
+              <TouchableOpacity
+                onPress={() => setVisibleBodega(true)}
+                className="bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
+              >
+                <View className="flex-1">
+                  <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Bodega Final</Text>
+                  <Text className={clsx('font-bold text-base', bodegaFinal ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                    {bodegaFinal?.nombre ?? 'Seleccionar bodega'}
+                  </Text>
+                </View>
+                <Ionicons name="home-outline" size={18} color={isDark ? 'white' : 'black'} />
+                {error && !bodegaFinal && <Text className="absolute -bottom-5 left-1 text-red-500 text-[10px] font-bold">Campo requerido</Text>}
               </TouchableOpacity>
             )}
 
@@ -319,10 +358,10 @@ export default function Create() {
 
           {/* Lista de Movimientos */}
           {ultimos_movimientos && ultimos_movimientos.length > 0 && <ListaMovimientosVendedor isRefetching={isRefetching} refetch={refetch} movimientos={ultimos_movimientos} />}
-          <SelectModal data={provedores} visible={visibleProvedor} onSelect={(item) => setProvedor(item)} onClose={() => setVisibleProvedor(false)} />
-          <SelectModal data={insumos} visible={visibleInsumo} onSelect={(item) => setInsumo(item)} onClose={() => setVisibleInsumo(false)} />
-          <SelectModal data={bodegas} visible={visibleBodega} onSelect={(item) => setBodega(item)} onClose={() => setVisibleBodega(false)} />
-          <SelectModal data={destinos} visible={visibleDestino} onSelect={(item) => setDestino(item)} onClose={() => setVisibleDestino(false)} />
+          <SelectModal title="Seleccionar Proveedor" data={provedores} visible={visibleProvedor} onSelect={(item) => setProvedor(item)} onClose={() => setVisibleProvedor(false)} />
+          <SelectModal title="Seleccionar Insumo" data={insumos} visible={visibleInsumo} onSelect={(item) => setInsumo(item)} onClose={() => setVisibleInsumo(false)} />
+          <SelectModal title="Seleccionar Bodega" data={bodegas} visible={visibleBodega} onSelect={(item) => setBodega(item)} onClose={() => setVisibleBodega(false)} />
+          <SelectModal title="Seleccionar Destino" data={destinos} visible={visibleDestino} onSelect={(item) => setDestino(item)} onClose={() => setVisibleDestino(false)} />
         </View>
       </KeyboardAwareScrollView>
     </View>

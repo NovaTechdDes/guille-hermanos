@@ -65,6 +65,7 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
           <Text className="text-neutral-900 dark:text-neutral-100 font-bold text-base leading-tight">{movimiento.insumo?.nombre || 'Insumo Desconocido'}</Text>
           <Text className="text-neutral-400 dark:text-neutral-500 text-xs mt-0.5">Bodega: {movimiento.bodega?.nombre || 'N/A'}</Text>
           <Text className="text-neutral-400 dark:text-neutral-500 text-xs mt-0.5">Destino: {movimiento.destino?.nombre || 'N/A'}</Text>
+          <Text className="text-neutral-400 dark:text-neutral-500 text-xs mt-0.5">Provedor: {movimiento.provedor?.nombre || 'N/A'}</Text>
           <View className="flex-row items-center mt-1">
             <Text className="text-neutral-400 dark:text-neutral-500 text-xs">{new Date(movimiento.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
             <View className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full mx-2" />
@@ -81,13 +82,12 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
           <View className={`mt-1 px-2 py-0.5 rounded ${isIngreso ? 'bg-green-800' : 'bg-orange-900'}`}>
             <Text className="text-white text-[10px] font-bold">{isIngreso ? 'INGRESO' : 'EGRESO'}</Text>
           </View>
-
-          {!eliminar && <Text className="mt-1 text-neutral-400 dark:text-neutral-500 text-md">Vendedor: {movimiento.usuarios?.nombre}</Text>}
         </View>
       </View>
 
       <View className="px-4 pb-2">
         <Text className="text-neutral-900 dark:text-neutral-100 font-bold text-sm leading-tight">Observacion: {movimiento.observacion || 'N/A'}</Text>
+        {!eliminar && <Text className="mt-1 text-neutral-400 dark:text-neutral-500 text-md">Vendedor: {movimiento.usuarios?.nombre}</Text>}
       </View>
 
       {eliminar && (
