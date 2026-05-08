@@ -11,7 +11,7 @@ export const useMutateUsuario = () => {
   });
 
   const startUpdateLogin = useMutation({
-    mutationFn: async ({ id_usuario, estado }: { id_usuario: string; estado: boolean }) => {
+    mutationFn: async ({ id_usuario, estado }: { id_usuario: number; estado: boolean }) => {
       return await toggleActivo(id_usuario, estado);
     },
     onSuccess: (data) => {
@@ -21,7 +21,7 @@ export const useMutateUsuario = () => {
   });
 
   const startUpdateUser = useMutation({
-    mutationFn: async ({ id_usuario, usuario, password, rol }: { id_usuario: string; usuario: string; password: string; rol: string }) => {
+    mutationFn: async ({ id_usuario, usuario, password, rol }: { id_usuario: number; usuario: string; password: string; rol: string }) => {
       return await updateUser(id_usuario, usuario, password, rol);
     },
     onSuccess: (data) => {

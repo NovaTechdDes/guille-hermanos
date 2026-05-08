@@ -109,8 +109,6 @@ export default function Create() {
       usuario_id: usuario?.id_usuario || 0,
     };
 
-    console.log(destinoFinal);
-
     if (!destinoFinal) {
       const movimientoIngreso: Mov_insumo = {
         tipo: 'INGRESO',

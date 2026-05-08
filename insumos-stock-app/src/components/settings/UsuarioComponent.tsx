@@ -25,7 +25,7 @@ export default function UsuarioComponent({ selected, setSelected }: Props) {
   const [rol, setRol] = useState<string>('');
 
   const [isVisible, setIsVisible] = useState(false);
-  const [idUsuario, setIdUsuario] = useState<string>('');
+  const [idUsuario, setIdUsuario] = useState<number>(0);
   const [activo, setActivo] = useState<boolean>(false);
 
   const inputRef = useRef<TextInput>(null);
@@ -96,8 +96,8 @@ export default function UsuarioComponent({ selected, setSelected }: Props) {
   };
 
   const handleCreateUser = async () => {
-    if (!nombre || !password || !rol) {
-      mensaje('error', 'Debe llenar todos los campos');
+    if (!nombre || (password.length > 0 && password.length < 6) || !rol) {
+      mensaje('error', 'Debe llenar todos los campos o ingresar una contraseña de al menos 6 caracteres');
       return;
     }
 
@@ -115,13 +115,8 @@ export default function UsuarioComponent({ selected, setSelected }: Props) {
   const handleUpdateUser = async () => {
     if (!usuario?.id_usuario) return;
 
-    if (!password || !rol) {
+    if ((password && password.length > 0 && password.length < 6) || !rol) {
       mensaje('error', 'Debe ingresar una contraseña y seleccionar un rol');
-      return;
-    }
-
-    if (password.length < 6) {
-      mensaje('error', 'La contraseña debe tener al menos 6 caracteres');
       return;
     }
 
@@ -166,7 +161,7 @@ export default function UsuarioComponent({ selected, setSelected }: Props) {
           </>
         }
         contentContainerStyle={{ paddingBottom: 20 }}
-        keyExtractor={(item) => item.id_usuario}
+        keyExtractor={(item) => item.id_usuario.toString()}
         renderItem={({ item }) => <UsuarioRender inputRef={inputRef} setUsuario={setUsuario} handleActive={handleActive} item={item} />}
       />
       <ToastConfirmacion visible={isVisible} mensaje={`${activo ? 'Desactivar' : 'Activar'} Usuario?`} onCancel={() => setIsVisible(false)} onConfirm={handleConfirm} />

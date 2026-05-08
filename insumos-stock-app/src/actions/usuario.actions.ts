@@ -46,7 +46,7 @@ export const postLogin = async (username: string, password: string) => {
   }
 };
 
-export const getUsuarioById = async (id: string): Promise<Usuario | null> => {
+export const getUsuarioById = async (id: number): Promise<Usuario | null> => {
   const usuarioEncontrado = usuarios.find((u) => u.id_usuario === id);
 
   if (!usuarioEncontrado) return null;
@@ -66,7 +66,7 @@ export const getAllUsuarios = async (): Promise<Usuario[]> => {
   }
 };
 
-export const toggleActivo = async (id_usuario: string, activo: boolean): Promise<boolean> => {
+export const toggleActivo = async (id_usuario: number, activo: boolean): Promise<boolean> => {
   try {
     const { error } = await supabase.from('usuarios').update({ activo }).eq('id_usuario', id_usuario).select();
 
@@ -99,7 +99,7 @@ export const createUser = async (nombre: string, password: string, rol: string):
   }
 };
 
-export const updateUser = async (id_usuario: string, usuario: string, password: string, rol: string): Promise<boolean> => {
+export const updateUser = async (id_usuario: number, usuario: string, password: string, rol: string): Promise<boolean> => {
   try {
     const { error } = await supabase.functions.invoke('actualizar-usuario', {
       body: {

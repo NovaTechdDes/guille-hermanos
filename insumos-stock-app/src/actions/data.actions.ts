@@ -2,7 +2,6 @@ import { supabase } from '../lib/supabase';
 
 export const getData = async (id_usuario?: number) => {
   try {
-    console.log({ id_usuario });
     const { data, error } = await supabase.rpc('get_app_data', { p_usuario_id: Number(id_usuario) ?? 0 });
 
     if (error) throw error;
