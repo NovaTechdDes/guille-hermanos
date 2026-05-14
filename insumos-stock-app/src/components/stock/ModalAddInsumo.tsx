@@ -99,8 +99,10 @@ export default function ModalAddInsumo({ isVisible, onClose }: ModalAddInsumoPro
                     <Ionicons name="leaf" size={24} color={colors.primary} />
                   </View>
                   <View>
-                    <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Nuevo Insumo</Text>
-                    <Text className="text-neutral-500 dark:text-neutral-400 font-medium text-xs">Defina el producto y su unidad de medida.</Text>
+                    <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">{insumoSeleccionado ? 'Editar Insumo' : 'Nuevo Insumo'}</Text>
+                    <Text className="text-neutral-500 dark:text-neutral-400 font-medium text-xs">
+                      {insumoSeleccionado ? 'Edita el producto y su unidad de medida' : 'Defina el producto y su unidad de medida'}.
+                    </Text>
                   </View>
                 </View>
 

@@ -1,15 +1,18 @@
 import MovimientoItem from '@/src/components/movimientos/MovimientoItem';
 import Loading from '@/src/components/ui/Loading';
+import SelectModal from '@/src/components/ui/SelectModal';
 import { useTheme } from '@/src/hooks';
 import { useData } from '@/src/hooks/data/useData';
 import { useMovimientos } from '@/src/hooks/movimientos/useMovimientos';
+import { Bodega } from '@/src/interface/Bodega';
+import { Destino } from '@/src/interface/Destino';
+import { Insumo } from '@/src/interface/Insumo';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { clsx } from 'clsx';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import { FlatList, Pressable, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function MovimientoScreen() {
@@ -17,15 +20,19 @@ export default function MovimientoScreen() {
   const { data, isLoading, refetch } = useData();
 
   const { insumoId } = useLocalSearchParams();
-  const { bodegas, insumos, destinos } = data || { bodegas: [], insumos: [] };
+  const { bodegas, insumos, destinos } = data || { bodegas: [], insumos: [], destinos: [] };
 
   const [desde, setDesde] = useState<Date>(new Date(new Date().setDate(new Date().getDate() - 7)));
   const [hasta, setHasta] = useState<Date>(new Date());
 
-  const [bodega, setBodega] = useState(null);
-  const [insumo, setInsumo] = useState(insumoId ? insumoId : null);
+  const [bodega, setBodega] = useState<string | null>(null);
+  const [destino, setDestino] = useState<string | null>(null);
+  const [insumo, setInsumo] = useState<string | null>(insumoId ? String(insumoId) : null);
 
-  const [destino, setDestino] = useState(null);
+  const [showBodegaModal, setShowBodegaModal] = useState(false);
+  const [showDestinoModal, setShowDestinoModal] = useState(false);
+  const [showInsumoModal, setShowInsumoModal] = useState(false);
+
   const [refreshing, setRefreshing] = useState(false);
 
   const { data: movimientos, isLoading: isMovimientosLoading } = useMovimientos(desde.toLocaleDateString('en-CA'), hasta.toLocaleDateString('en-CA'));
@@ -39,7 +46,7 @@ export default function MovimientoScreen() {
 
   useEffect(() => {
     if (insumoId) {
-      setInsumo(insumoId);
+      setInsumo(String(insumoId));
     }
   }, [insumoId]);
 
@@ -55,6 +62,7 @@ export default function MovimientoScreen() {
   if (isLoading || isMovimientosLoading) return <Loading text="Cargando los datos" />;
 
   const filteredMovimientos = movimientos?.filter((mov) => {
+    console.log(bodega);
     const matchBodega = bodega ? mov.bodega_id === bodega : true;
     const matchInsumo = insumo ? mov.insumo_id === insumo : true;
     const matchDestino = destino ? mov.destino_id === destino : true;
@@ -65,34 +73,6 @@ export default function MovimientoScreen() {
     setRefreshing(true);
     refetch();
     setRefreshing(false);
-  };
-
-  const dropdownStyles = {
-    style: [
-      styles.dropdown,
-      {
-        backgroundColor: isDark ? '#171717' : '#FFFFFF',
-        borderColor: isDark ? '#262626' : '#F3F4F6',
-      },
-    ],
-    placeholderStyle: [styles.placeholderStyle, { color: isDark ? '#737373' : '#9CA3AF' }],
-    selectedTextStyle: [styles.selectedTextStyle, { color: isDark ? '#F5F5F5' : '#111827' }],
-    inputSearchStyle: [
-      styles.inputSearchStyle,
-      {
-        color: isDark ? 'white' : 'black',
-        backgroundColor: isDark ? '#171717' : 'white',
-      },
-    ],
-    containerStyle: [
-      styles.containerStyle,
-      {
-        backgroundColor: isDark ? '#171717' : 'white',
-        borderColor: isDark ? '#262626' : '#E5E7EB',
-      },
-    ],
-    itemTextStyle: { color: isDark ? '#D4D4D4' : '#1F2937' },
-    activeColor: isDark ? '#262626' : '#F9FAFB',
   };
 
   return (
@@ -173,50 +153,65 @@ export default function MovimientoScreen() {
 
               {/* Dropdown Filters */}
               <View className="gap-3">
-                <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14">
-                  <Ionicons name={type === 'bodega' ? 'business' : 'trail-sign'} size={18} color={isDark ? '#525252' : '#A3A3A3'} />
-                  <Dropdown
-                    data={type === 'bodega' ? (bodegas as any) : (destinos as any)}
-                    search
-                    {...dropdownStyles}
-                    style={[dropdownStyles.style, { borderWidth: 0, flex: 1, backgroundColor: 'transparent' }]}
-                    searchPlaceholder={type === 'bodega' ? 'Buscar Bodega...' : 'Buscar Destino...'}
-                    valueField={type === 'bodega' ? 'id_bodega' : 'id_destino'}
-                    labelField="nombre"
-                    placeholder={type === 'bodega' ? 'Filtrar por Bodega' : 'Filtrar por Destino'}
-                    value={type === 'bodega' ? bodega : destino}
-                    onChange={(item) => (type === 'bodega' ? setBodega(item.id_bodega) : setDestino(item.id_destino))}
-                    renderRightIcon={() =>
-                      (type === 'bodega' ? bodega : destino) ? (
-                        <TouchableOpacity className="ml-8" onPress={() => (type === 'bodega' ? setBodega(null) : setDestino(null))}>
-                          <Ionicons name="close-circle" size={32} color="#ef4444" />
-                        </TouchableOpacity>
-                      ) : null
-                    }
-                  />
-                </View>
-
-                <View className="flex-row items-center bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14">
-                  <Ionicons name="leaf" size={18} color={isDark ? '#525252' : '#A3A3A3'} />
-                  <Dropdown
-                    data={insumos as any}
-                    search
-                    {...dropdownStyles}
-                    style={[dropdownStyles.style, { borderWidth: 0, flex: 1, backgroundColor: 'transparent' }]}
-                    searchPlaceholder="Buscar Insumo..."
-                    valueField="id_insumo"
-                    labelField="nombre"
-                    placeholder="Filtrar por Insumo"
-                    value={insumo}
-                    onChange={(item) => setInsumo(item.id_insumo)}
-                    renderRightIcon={() =>
-                      insumo ? (
-                        <TouchableOpacity className="ml-8" onPress={() => setInsumo(null)}>
-                          <Ionicons name="close-circle" size={32} color="#ef4444" />
-                        </TouchableOpacity>
-                      ) : null
-                    }
-                  />
+                {type === 'bodega' ? (
+                  <View className="flex flex-row justify-between items-center gap-2">
+                    <TouchableOpacity
+                      onPress={() => setShowBodegaModal(true)}
+                      className="flex-row flex-1 items-center gap-2 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14"
+                    >
+                      <Ionicons name={type === 'bodega' ? 'business' : 'trail-sign'} size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                      <Text className={clsx('font-bold text-base', bodega ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                        {bodega ? bodegas.find((item: Bodega) => item.id_bodega === bodega)?.nombre : 'Seleccionar Bodega'}
+                      </Text>
+                    </TouchableOpacity>
+                    {bodega && (
+                      <TouchableOpacity
+                        onPress={() => setBodega(null)}
+                        className="flex-row items-center gap-2 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14"
+                      >
+                        <Ionicons name="trash" size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ) : (
+                  <View className="flex flex-row justify-between items-center gap-2">
+                    <TouchableOpacity
+                      onPress={() => setShowDestinoModal(true)}
+                      className="flex-row flex-1 items-center gap-2 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14"
+                    >
+                      <Ionicons name={type === 'destino' ? 'trail-sign' : 'business'} size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                      <Text className={clsx('font-bold text-base', destino ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                        {destino ? destinos.find((item: Destino) => item.id_destino === destino)?.nombre : 'Seleccionar Destino'}
+                      </Text>
+                    </TouchableOpacity>
+                    {destino && (
+                      <TouchableOpacity
+                        onPress={() => setDestino(null)}
+                        className="flex-row items-center gap-2 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14"
+                      >
+                        <Ionicons name="trash" size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
+                <View className="flex flex-row justify-between items-center gap-2">
+                  <TouchableOpacity
+                    onPress={() => setShowInsumoModal(true)}
+                    className="flex-row flex-1 items-center gap-2 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14"
+                  >
+                    <Ionicons name="leaf" size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                    <Text className={clsx('font-bold text-base', insumo ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-400 dark:text-neutral-600')}>
+                      {insumo ? insumos.find((item: Insumo) => item.id_insumo === insumo)?.nombre : 'Seleccionar Insumo'}
+                    </Text>
+                  </TouchableOpacity>
+                  {insumo && (
+                    <TouchableOpacity
+                      onPress={() => setInsumo(null)}
+                      className="flex-row items-center gap-2 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 px-4 rounded-2xl h-14"
+                    >
+                      <Ionicons name="trash" size={18} color={isDark ? '#525252' : '#A3A3A3'} />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
@@ -245,40 +240,9 @@ export default function MovimientoScreen() {
           </View>
         }
       />
+      <SelectModal title="Seleccionar Bodega" data={bodegas} visible={showBodegaModal} onSelect={(item: Bodega) => setBodega(item.id_bodega!)} onClose={() => setShowBodegaModal(false)} />
+      <SelectModal title="Seleccionar Destino" data={destinos} visible={showDestinoModal} onSelect={(item: Destino) => setDestino(item.id_destino!)} onClose={() => setShowDestinoModal(false)} />
+      <SelectModal title="Seleccionar Insumo" data={insumos} visible={showInsumoModal} onSelect={(item: Insumo) => setInsumo(item.id_insumo!)} onClose={() => setShowInsumoModal(false)} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  dropdown: {
-    height: 56,
-    width: '100%',
-    paddingHorizontal: 12,
-  },
-  placeholderStyle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  selectedTextStyle: {
-    fontSize: 14,
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  inputSearchStyle: {
-    height: 45,
-    fontSize: 14,
-    borderRadius: 12,
-  },
-  containerStyle: {
-    borderRadius: 24,
-    marginTop: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-  },
-});
