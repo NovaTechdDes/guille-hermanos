@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Control de Insumos",
+    "name": "Insumos GH",
     "slug": "control-de-insumos",
     "version": "2.2.2",
     "orientation": "portrait",
@@ -15,8 +15,16 @@
       "fallbackToCacheTimeout": 0
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.pelusaaal.controldegestion"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.pelusaaal.controldegestion",
+      "icon": {
+        "dark": "./assets/images/ios-dark.png",
+        "light": "./assets/images/ios-light.png",
+        "tinted": "./assets/images/ios-tinted.png"
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.pelusaaal.controldegestion",

@@ -1,0 +1,27 @@
+# Ignore dependencies
+node_modules/
+
+# Ignore local build artifacts
+dist/
+web-build/
+
+# Ignore native folders (EAS will regenerate them)
+ios/
+android/
+
+# Ignore Expo internal files
+.expo/
+
+# Ignore local environment files
+.env
+.env*.local
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Git directory (can be huge)
+.git/
+
+# Ignore agent-specific folders
+.agents/
