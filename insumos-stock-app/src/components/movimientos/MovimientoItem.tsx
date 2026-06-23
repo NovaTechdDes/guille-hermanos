@@ -31,8 +31,8 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
       destino_id: movimiento.destino?.id,
       cantidad: movimiento.cantidad,
       tipo: movimiento.tipo,
-      observacion: `Anti Movimiento de un insumo eliminado. Usuario: ${usuario?.usuario}.`,
-      fecha: new Date().toISOString(),
+      observacion: `Anti Movimiento de un insumo eliminado. Usuario: ${usuario?.nombre}.`,
+      fecha: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     };
 
     antiMovmineto.tipo = isIngreso ? 'EGRESO' : 'INGRESO';
@@ -106,7 +106,13 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
         </View>
       )}
 
-      <ToastConfirmacion visible={show} onConfirm={handleDelete} onCancel={() => setShow(false)} mensaje="¿Estás seguro de eliminar este movimiento? (Se revertirá el movimiento)" />
+      <ToastConfirmacion
+        disabled={startPostMovimiento.isPending}
+        visible={show}
+        onConfirm={handleDelete}
+        onCancel={() => setShow(false)}
+        mensaje="¿Estás seguro de eliminar este movimiento? (Se revertirá el movimiento)"
+      />
     </View>
   );
 }

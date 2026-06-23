@@ -9,9 +9,10 @@ interface Props {
   onCancel: () => void;
   confirmText?: string;
   cancelText?: string;
+  disabled?: boolean;
 }
 
-export default function ToastConfirmacion({ visible, mensaje, onConfirm, onCancel, confirmText = 'Confirmar', cancelText = 'Cancelar' }: Props) {
+export default function ToastConfirmacion({ visible, mensaje, onConfirm, onCancel, confirmText = 'Confirmar', cancelText = 'Cancelar', disabled = false }: Props) {
   return (
     <Modal animationType="fade" transparent={true} visible={visible} onRequestClose={onCancel}>
       <View className="flex-1 items-center justify-center bg-black/50 px-6">
@@ -37,8 +38,13 @@ export default function ToastConfirmacion({ visible, mensaje, onConfirm, onCance
               <Text className="text-base font-semibold text-slate-500 dark:text-slate-400">{cancelText}</Text>
             </Pressable>
             <View className="w-[1px] bg-slate-100 dark:bg-slate-800" />
-            <Pressable onPress={onConfirm} className="flex-1 items-center justify-center py-5 active:bg-slate-50 dark:active:bg-slate-800" style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
-              <Text className="text-base font-bold text-amber-600 dark:text-amber-500">{confirmText}</Text>
+            <Pressable
+              onPress={onConfirm}
+              disabled={disabled}
+              className="flex-1 items-center justify-center py-5 active:bg-slate-50 dark:active:bg-slate-800"
+              style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+            >
+              <Text className={`text-base font-bold ${disabled ? 'text-slate-400 dark:text-slate-500' : 'text-amber-600 dark:text-amber-500'}`}>{disabled ? 'Procesando...' : confirmText}</Text>
             </Pressable>
           </View>
         </View>
