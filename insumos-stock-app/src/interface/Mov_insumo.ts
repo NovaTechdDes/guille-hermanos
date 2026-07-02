@@ -14,4 +14,5 @@ export interface Mov_insumo {
   destino?: { id: string; nombre: string };
   provedor?: { id: string; nombre: string };
   usuarios?: { id: string; nombre: string };
+  created_at: string;
 }

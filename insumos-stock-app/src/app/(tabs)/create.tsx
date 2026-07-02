@@ -108,6 +108,7 @@ export default function Create() {
       destino_id: destino?.id_destino,
       observacion: observacion,
       usuario_id: usuario?.id_usuario || 0,
+      created_at: new Date().toISOString(),
     };
 
     if (!destinoFinal) {
@@ -120,6 +121,7 @@ export default function Create() {
         bodega_id: bodegaFinal?.id_bodega,
         observacion: observacion,
         usuario_id: usuario?.id_usuario || 0,
+        created_at: new Date().toISOString(),
       };
 
       const res = await startPostMovimiento.mutateAsync(movimientoIngreso);

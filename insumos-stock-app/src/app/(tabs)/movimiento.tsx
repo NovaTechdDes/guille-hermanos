@@ -62,7 +62,6 @@ export default function MovimientoScreen() {
   if (isLoading || isMovimientosLoading) return <Loading text="Cargando los datos" />;
 
   const filteredMovimientos = movimientos?.filter((mov) => {
-    console.log(bodega);
     const matchBodega = bodega ? mov.bodega_id === bodega : true;
     const matchInsumo = insumo ? mov.insumo_id === insumo : true;
     const matchDestino = destino ? mov.destino_id === destino : true;

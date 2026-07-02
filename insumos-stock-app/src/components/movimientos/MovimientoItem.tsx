@@ -31,6 +31,7 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
       destino_id: movimiento.destino?.id,
       cantidad: movimiento.cantidad,
       tipo: movimiento.tipo,
+      created_at: new Date().toISOString(),
       observacion: `Anti Movimiento de un insumo eliminado. Usuario: ${usuario?.nombre}.`,
       fecha: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     };
@@ -69,7 +70,9 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
           <View className="flex-row items-center mt-1">
             <Text className="text-neutral-400 dark:text-neutral-500 text-xs">{new Date(movimiento.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
             <View className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full mx-2" />
-            <Text className="text-neutral-400 dark:text-neutral-500 text-xs">{new Date(movimiento.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</Text>
+            <Text className="text-neutral-400 dark:text-neutral-500 text-xs">
+              {new Date(movimiento.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
+            </Text>
           </View>
         </View>
 
