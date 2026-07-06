@@ -3,10 +3,14 @@ import { useMutateMovimiento } from '@/src/hooks/movimientos/useMutateMovimiento
 import { useUsuarioStore } from '@/src/store/useUsuarioStore';
 import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Mov_insumo } from '../../interface/Mov_insumo';
 import ToastConfirmacion from '../ui/ToastConfirmacion';
+
+dayjs.extend(utc);
 
 interface Props {
   movimiento: Mov_insumo;
@@ -48,6 +52,8 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
     setShow(false);
   };
 
+  console.log(movimiento.created_at);
+
   return (
     <View className="bg-white dark:bg-neutral-900 mx-4 mb-1 border-b border-neutral-100 dark:border-neutral-800">
       <View className="flex-row items-center p-4">
@@ -70,9 +76,7 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
           <View className="flex-row items-center mt-1">
             <Text className="text-neutral-400 dark:text-neutral-500 text-xs">{new Date(movimiento.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}</Text>
             <View className="w-1 h-1 bg-neutral-300 dark:bg-neutral-600 rounded-full mx-2" />
-            <Text className="text-neutral-400 dark:text-neutral-500 text-xs">
-              {new Date(movimiento.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Argentina/Buenos_Aires' })}
-            </Text>
+            <Text className="text-neutral-400 dark:text-neutral-500 text-xs">{dayjs.utc(movimiento.created_at).local().format('HH:mm')}</Text>
           </View>
         </View>
 

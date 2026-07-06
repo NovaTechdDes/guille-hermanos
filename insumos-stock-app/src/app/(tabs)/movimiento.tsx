@@ -1,3 +1,4 @@
+import { generarPDF } from '@/src/actions/generarPDF.actions';
 import MovimientoItem from '@/src/components/movimientos/MovimientoItem';
 import Loading from '@/src/components/ui/Loading';
 import SelectModal from '@/src/components/ui/SelectModal';
@@ -88,8 +89,19 @@ export default function MovimientoScreen() {
             {/* Header Filters */}
             <View className="px-6 pt-6 pb-8 bg-white dark:bg-neutral-900 rounded-b-[40px] shadow-xl shadow-black/5 border-b border-neutral-100 dark:border-neutral-800">
               <View className="mb-6">
+                <View className="flex-row justify-between mb-4">
+                  <Pressable onPress={() => generarPDF(filteredMovimientos || [])}>
+                    <View className="flex-row items-center gap-2 bg-red-500 px-4 py-2 rounded-xl shadow-md">
+                      <Text className="text-white font-bold text-sm">PDF</Text>
+                    </View>
+                  </Pressable>
+                  <Pressable onPress={() => console.log('Excel')}>
+                    <View className="flex-row items-center gap-2 bg-green-500 px-4 py-2 rounded-xl shadow-md">
+                      <Text className="text-white font-bold text-sm">EXCEL</Text>
+                    </View>
+                  </Pressable>
+                </View>
                 <Text className="text-2xl font-black text-neutral-800 dark:text-white tracking-tight">Historial de Movimientos</Text>
-                <Text className="text-sm text-neutral-500 dark:text-neutral-400 font-medium mt-1">Consulta los ingresos y egresos registrados.</Text>
               </View>
 
               {/* Date Selectors */}
