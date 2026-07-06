@@ -1,19 +1,18 @@
-import { generarPDF } from '@/src/actions/generarPDF.actions';
+import { generarExcel, generarPDF } from '@/src/actions';
 import MovimientoItem from '@/src/components/movimientos/MovimientoItem';
 import Loading from '@/src/components/ui/Loading';
 import SelectModal from '@/src/components/ui/SelectModal';
 import { useTheme } from '@/src/hooks';
 import { useData } from '@/src/hooks/data/useData';
 import { useMovimientos } from '@/src/hooks/movimientos/useMovimientos';
-import { Bodega } from '@/src/interface/Bodega';
-import { Destino } from '@/src/interface/Destino';
-import { Insumo } from '@/src/interface/Insumo';
+import { Bodega, Destino, Insumo } from '@/src/interface';
+
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { clsx } from 'clsx';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { FlatList, Pressable, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Platform, Pressable, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 export default function MovimientoScreen() {
@@ -95,7 +94,7 @@ export default function MovimientoScreen() {
                       <Text className="text-white font-bold text-sm">PDF</Text>
                     </View>
                   </Pressable>
-                  <Pressable onPress={() => console.log('Excel')}>
+                  <Pressable onPress={() => generarExcel(filteredMovimientos || [])}>
                     <View className="flex-row items-center gap-2 bg-green-500 px-4 py-2 rounded-xl shadow-md">
                       <Text className="text-white font-bold text-sm">EXCEL</Text>
                     </View>
@@ -110,21 +109,40 @@ export default function MovimientoScreen() {
                   onPress={() => setShowDesde(true)}
                   className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
                 >
-                  <View>
-                    <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Desde</Text>
-                    <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{desde.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</Text>
-                  </View>
-                  <Ionicons name="calendar" size={18} color="#34d399" />
-                  {showDesde && (
-                    <DateTimePicker
-                      value={desde}
-                      mode="date"
-                      display="default"
-                      onChange={(event, date) => {
-                        setShowDesde(false);
-                        if (date) setDesde(date);
-                      }}
-                    />
+                  {Platform.OS === 'ios' ? (
+                    <View className="flex-row items-center justify-between flex-1">
+                      <View>
+                        <DateTimePicker
+                          value={desde}
+                          locale="es-ES"
+                          mode="date"
+                          display="default"
+                          onChange={(event, date) => {
+                            if (date) setDesde(date);
+                          }}
+                        />
+                      </View>
+                    </View>
+                  ) : (
+                    <>
+                      <View>
+                        <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Desde</Text>
+                        <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{desde.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</Text>
+                      </View>
+                      <Ionicons name="calendar" size={18} color="#34d399" />
+                      {showDesde && (
+                        <DateTimePicker
+                          value={desde}
+                          locale="es-ES"
+                          mode="date"
+                          display="default"
+                          onChange={(event, date) => {
+                            setShowDesde(false);
+                            if (date) setDesde(date);
+                          }}
+                        />
+                      )}
+                    </>
                   )}
                 </Pressable>
 
@@ -132,21 +150,40 @@ export default function MovimientoScreen() {
                   onPress={() => setShowHasta(true)}
                   className="flex-1 bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-100 dark:border-neutral-800 p-4 rounded-2xl flex-row items-center justify-between"
                 >
-                  <View>
-                    <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Hasta</Text>
-                    <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{hasta.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</Text>
-                  </View>
-                  <Ionicons name="calendar" size={18} color="#34d399" />
-                  {showHasta && (
-                    <DateTimePicker
-                      value={hasta}
-                      mode="date"
-                      display="default"
-                      onChange={(event, date) => {
-                        setShowHasta(false);
-                        if (date) setHasta(date);
-                      }}
-                    />
+                  {Platform.OS === 'ios' ? (
+                    <View className="flex-row items-center justify-between flex-1">
+                      <View>
+                        <DateTimePicker
+                          value={hasta}
+                          locale="es-ES"
+                          mode="date"
+                          display="default"
+                          onChange={(event, date) => {
+                            if (date) setHasta(date);
+                          }}
+                        />
+                      </View>
+                    </View>
+                  ) : (
+                    <>
+                      <View>
+                        <Text className="text-[10px] font-black text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-1">Hasta</Text>
+                        <Text className="text-neutral-900 dark:text-neutral-100 font-bold">{hasta.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}</Text>
+                      </View>
+                      <Ionicons name="calendar" size={18} color="#34d399" />
+                      {showHasta && (
+                        <DateTimePicker
+                          value={hasta}
+                          mode="date"
+                          display="default"
+                          locale="es-ES"
+                          onChange={(event, date) => {
+                            setShowHasta(false);
+                            if (date) setHasta(date);
+                          }}
+                        />
+                      )}
+                    </>
                   )}
                 </Pressable>
               </View>

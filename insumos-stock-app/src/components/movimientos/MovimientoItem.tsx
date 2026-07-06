@@ -52,8 +52,6 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
     setShow(false);
   };
 
-  console.log(movimiento.created_at);
-
   return (
     <View className="bg-white dark:bg-neutral-900 mx-4 mb-1 border-b border-neutral-100 dark:border-neutral-800">
       <View className="flex-row items-center p-4">
