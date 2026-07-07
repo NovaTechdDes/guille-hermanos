@@ -10,6 +10,7 @@ import Checkbox from '../components/ui/Checkbox';
 import Text from '../components/ui/Text';
 import { useTheme } from '../hooks';
 import { useMutateUsuario } from '../hooks/usuarios/useMutateUsuario';
+import { canUseBiometrics, saveBiometricConfig } from '../lib/biometria';
 import { useUsuarioStore } from '../store/useUsuarioStore';
 import { mensaje } from '../utils/mensaje';
 
@@ -39,6 +40,15 @@ export default function LoginScreen() {
       mensaje('success', '¡Usuario logueado correctamente!');
       setUsuarioStore(response.usuario);
       setSession(response?.session || null);
+
+      const compatible = await canUseBiometrics();
+
+      if (compatible) {
+        await saveBiometricConfig({
+          userId: response.session.user.id,
+          enabled: true,
+        });
+      }
 
       if (response.usuario.rol === 'EMPLEADO') {
         router.replace('/create');

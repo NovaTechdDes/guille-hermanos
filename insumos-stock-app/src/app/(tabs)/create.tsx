@@ -102,7 +102,7 @@ export default function Create() {
       tipo: type.toUpperCase() as 'INGRESO' | 'EGRESO',
       provedor_id: provedor?.id_provedor,
       insumo_id: insumo?.id_insumo,
-      cantidad: Number(cantidad),
+      cantidad: Number(cantidad.replace(',', '.')),
       fecha: fecha.toISOString().split('T')[0],
       bodega_id: bodega?.id_bodega,
       destino_id: destino?.id_destino,
@@ -116,7 +116,7 @@ export default function Create() {
         tipo: 'INGRESO',
         provedor_id: provedor?.id_provedor,
         insumo_id: insumo?.id_insumo,
-        cantidad: Number(cantidad),
+        cantidad: Number(cantidad.replace(',', '.')),
         fecha: fecha.toISOString().split('T')[0],
         bodega_id: bodegaFinal?.id_bodega,
         observacion: observacion,
@@ -245,7 +245,7 @@ export default function Create() {
                   <TextInput
                     className="text-neutral-800 dark:text-neutral-100 font-bold text-lg"
                     value={cantidad}
-                    onChangeText={setCantidad}
+                    onChangeText={(val) => setCantidad(val.replace(',', '.'))}
                     placeholder="0.00"
                     placeholderTextColor={isDark ? '#525252' : '#D4D4D4'}
                     keyboardType="decimal-pad"

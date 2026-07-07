@@ -1,8 +1,9 @@
+import { supabase } from '@/src/lib/supabase';
 import { useUsuarioStore } from '@/src/store/useUsuarioStore';
 import { colors } from '@/src/theme/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Tabs } from 'expo-router';
-import { TouchableOpacity, useColorScheme } from 'react-native';
+import { TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabsLayout() {
@@ -12,6 +13,11 @@ export default function TabsLayout() {
   const insets = useSafeAreaInsets();
 
   const isAdmin = usuario?.rol === 'SUPERADMIN';
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace('/login');
+  };
 
   return (
     <Tabs
@@ -28,15 +34,21 @@ export default function TabsLayout() {
         },
         headerShadowVisible: false,
         tabBarIcon: ({ color, focused }) => <Ionicons name={focused ? 'cube' : 'cube-outline'} size={24} color={color} />,
-        headerRight: () =>
-          isAdmin ? (
-            <TouchableOpacity
-              onPress={() => router.push('/settings')} // Ruta a tu pantalla de config
-              style={{ marginRight: 15 }}
-            >
-              <Ionicons name="settings-outline" size={24} color={colors.primary} />
+        headerRight: () => (
+          <View className="flex-row gap-5">
+            <TouchableOpacity onPress={handleLogout}>
+              <Ionicons name="log-out-outline" size={24} color="red" />
             </TouchableOpacity>
-          ) : null,
+            {isAdmin ? (
+              <TouchableOpacity
+                onPress={() => router.push('/settings')} // Ruta a tu pantalla de config
+                style={{ marginRight: 15 }}
+              >
+                <Ionicons name="settings-outline" size={24} color={colors.primary} />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        ),
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: isDark ? colors.dark.textSecondary : colors.light.textSecondary,
         tabBarStyle: {
