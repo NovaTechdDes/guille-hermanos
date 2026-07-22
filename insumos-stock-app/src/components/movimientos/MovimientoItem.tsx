@@ -28,6 +28,9 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
   const handleDelete = async () => {
     if (!movimiento.insumo || !movimiento.bodega) return;
 
+    if (startPostMovimiento.isPending) return;
+    setShow(false);
+
     const antiMovmineto: Mov_insumo = {
       usuario_id: usuario?.id_usuario || 0,
       insumo_id: movimiento.insumo.id,
@@ -48,8 +51,6 @@ export default function MovimientoItem({ movimiento, eliminar = false }: Props) 
     } else {
       mensaje('error', 'Error al eliminar movimiento');
     }
-
-    setShow(false);
   };
 
   return (

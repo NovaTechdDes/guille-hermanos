@@ -2,7 +2,7 @@
   "expo": {
     "name": "Insumos GH",
     "slug": "control-de-insumos",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "control-de-insumos",
@@ -23,7 +23,8 @@
         "tinted": "./assets/images/ios-tinted.png"
       },
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Usamos Face ID para permitir un acceso seguro a tu cuenta."
+        "NSFaceIDUsageDescription": "Usamos Face ID para permitir un acceso seguro a tu cuenta.",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "ITSAppUsesNonExemptEncryption": false
     },
