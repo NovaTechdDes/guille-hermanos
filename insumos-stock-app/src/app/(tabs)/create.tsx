@@ -10,7 +10,7 @@ import { mensaje } from '@/src/utils/mensaje';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import clsx from 'clsx';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, Text, TextInput, TouchableOpacity, View, useColorScheme } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -18,7 +18,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 export default function Create() {
   const colorScheme = useColorScheme();
   const { usuario } = useUsuarioStore();
-  const { data, isLoading, refetch, isRefetching } = useData(usuario?.id_usuario || 0);
+  const { data, isLoading, refetch, isRefetching, isError } = useData(usuario?.id_usuario || 0);
   const { startPostMovimiento } = useMutateMovimiento();
 
   const isDark = colorScheme === 'dark';
@@ -144,6 +144,21 @@ export default function Create() {
 
   if (isLoading) {
     return <Loading text="Cargando datos del sistema" />;
+  }
+
+  if (isError || (!data && !isLoading)) {
+    return (
+      <View className="flex-1 bg-neutral-50 dark:bg-neutral-950 justify-center items-center p-6">
+        <Ionicons name="cloud-offline-outline" size={64} color="#ef4444" />
+        <Text className="text-xl font-bold text-neutral-800 dark:text-white mt-4 text-center">No se pudieron cargar los datos</Text>
+        <Text className="text-neutral-500 dark:text-neutral-400 text-center mt-2 mb-6">Verifique su conexión a internet e inténtelo nuevamente.</Text>
+
+        <TouchableOpacity onPress={() => refetch()} disabled={isRefetching} className="bg-primary px-8 py-3.5 rounded-2xl flex-row items-center gap-2">
+          <Ionicons name="refresh" size={20} color="white" />
+          <Text className="text-white font-bold">{isRefetching ? 'Reintentando...' : 'Reintentar'}</Text>
+        </TouchableOpacity>
+      </View>
+    );
   }
 
   return (

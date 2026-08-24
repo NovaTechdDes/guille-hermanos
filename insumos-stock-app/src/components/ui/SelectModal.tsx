@@ -55,6 +55,12 @@ export default function SelectModal<T extends { nombre: string }>({ visible, dat
                 <Ionicons name="chevron-forward" size={20} color="#A3A3A3" />
               </TouchableOpacity>
             )}
+            ListEmptyComponent={() => (
+              <View className="py-12 items-center justify-center">
+                <Ionicons name="alert-circle-outline" size={36} color="#9ca3af" />
+                <Text className="text-neutral-400 text-center mt-2">{search ? 'No se encontraron resultados' : 'No hay datos disponibles'}</Text>
+              </View>
+            )}
           />
         </View>
       </KeyboardAvoidingView>

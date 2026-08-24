@@ -1,15 +1,14 @@
 import { supabase } from '../lib/supabase';
 
 export const getData = async (id_usuario?: number) => {
-  try {
-    const { data, error } = await supabase.rpc('get_app_data', { p_usuario_id: Number(id_usuario) ?? 0 });
+  const { data, error } = await supabase.rpc('get_app_data', { p_usuario_id: Number(id_usuario) ?? 0 });
 
-    if (error) throw error;
-
-    return data as any;
-  } catch (error) {
-    console.error(error);
+  if (error) {
+    console.error('Error al obtener datos: ', error);
+    throw error;
   }
+
+  return data as any;
 };
 
 export interface Stock {

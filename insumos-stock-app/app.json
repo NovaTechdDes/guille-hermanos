@@ -2,7 +2,7 @@
   "expo": {
     "name": "Insumos GH",
     "slug": "control-de-insumos",
-    "version": "3.0.1",
+    "version": "3.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "control-de-insumos",
